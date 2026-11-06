@@ -1,0 +1,402 @@
+---
+import { album, site } from '../data/site';
+---
+
+<section class="section album-section" id="album">
+  <div class="container grid">
+    <div class="player" data-player>
+      <button class="cover" type="button" data-toggle aria-label={`${album.title} 재생`}>
+        <img src={album.cover} alt={`${album.label} ${album.title}(${album.titleEn}) 커버`} width="1000" height="1000" loading="eager" />
+        <span class="state" aria-hidden="true">
+          <span class="icon-play"></span>
+          <span class="icon-pause"></span>
+        </span>
+      </button>
+      <audio src={album.audio} preload="none" data-audio></audio>
+      <div class="bar">
+        <span class="time" data-current>0:00</span>
+        <input
+          id="album-progress"
+          class="progress"
+          type="range"
+          min="0"
+          max="100"
+          step="0.1"
+          value="0"
+          aria-label="재생 위치"
+          data-progress
+        />
+        <span class="time" data-duration>-:--</span>
+      </div>
+    </div>
+
+    <div class="info">
+      <p class="eyebrow">New Release</p>
+      <p class="label">{site.nameKo} {album.label}</p>
+      <h2 class="title">
+        {album.title}
+        <span>{album.titleEn}</span>
+      </h2>
+      <p class="release">
+        <span class="dday" data-release={album.releaseAt} hidden></span>
+        {album.releaseText}
+      </p>
+
+      {/* 발매 시각까지 남은 시간. 발매 후에는 숨겨진다. */}
+      <div class="countdown" data-countdown={album.releaseAt} aria-label="발매까지 남은 시간">
+        <p class="cd-label">발매까지</p>
+        <ol class="cd-units">
+          <li><b data-unit="d">--</b><span>일</span></li>
+          <li><b data-unit="h">--</b><span>시간</span></li>
+          <li><b data-unit="m">--</b><span>분</span></li>
+          <li><b data-unit="s">--</b><span>초</span></li>
+        </ol>
+      </div>
+      <p class="hint">커버를 누르면 바로 들을 수 있습니다.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const fmt = (s: number) => {
+    if (!isFinite(s)) return '-:--';
+    const m = Math.floor(s / 60);
+    return `${m}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-player]').forEach((player) => {
+    const audio = player.querySelector<HTMLAudioElement>('[data-audio]')!;
+    const toggle = player.querySelector<HTMLButtonElement>('[data-toggle]')!;
+    const progress = player.querySelector<HTMLInputElement>('[data-progress]')!;
+    const cur = player.querySelector<HTMLElement>('[data-current]')!;
+    const dur = player.querySelector<HTMLElement>('[data-duration]')!;
+    const title = toggle.getAttribute('aria-label')?.replace(/ 재생$/, '') ?? '';
+    let seeking = false;
+
+    const paint = () => {
+      const playing = !audio.paused;
+      player.toggleAttribute('data-playing', playing);
+      toggle.setAttribute('aria-label', `${title} ${playing ? '일시정지' : '재생'}`);
+    };
+
+    toggle.addEventListener('click', () => {
+      if (audio.paused) {
+        // 다른 오디오, 영상 재생기가 있으면 겹치지 않게 이 곡만 재생
+        document.querySelectorAll('audio').forEach((a) => a !== audio && a.pause());
+        audio.play().catch(() => paint());
+      } else {
+        audio.pause();
+      }
+    });
+    audio.addEventListener('play', paint);
+    audio.addEventListener('pause', paint);
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      paint();
+    });
+    audio.addEventListener('loadedmetadata', () => (dur.textContent = fmt(audio.duration)));
+    audio.addEventListener('timeupdate', () => {
+      cur.textContent = fmt(audio.currentTime);
+      if (!seeking && audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progress.value = String(pct);
+        progress.style.setProperty('--pct', `${pct}%`);
+      }
+    });
+    progress.addEventListener('input', () => {
+      seeking = true;
+      progress.style.setProperty('--pct', `${progress.value}%`);
+      if (audio.duration) cur.textContent = fmt((Number(progress.value) / 100) * audio.duration);
+    });
+    progress.addEventListener('change', () => {
+      seeking = false;
+      if (audio.duration) {
+        audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+      } else {
+        // 아직 불러오기 전이면 먼저 재생을 시작한다
+        toggle.click();
+      }
+    });
+  });
+
+  // 발매 시각까지 1초마다 남은 시간을 보여준다. 시각이 지나면 카운트다운을 숨긴다.
+  document.querySelectorAll<HTMLElement>('[data-countdown]').forEach((box) => {
+    const at = new Date(box.dataset.countdown!).getTime();
+    if (Number.isNaN(at)) return;
+    const unit = (k: string) => box.querySelector<HTMLElement>(`[data-unit="${k}"]`)!;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    let timer = 0;
+    const tick = () => {
+      const left = at - Date.now();
+      if (left <= 0) {
+        box.hidden = true;
+        window.clearInterval(timer);
+        document.querySelectorAll<HTMLElement>('[data-release]').forEach((el) => (el.textContent = 'OUT NOW'));
+        return;
+      }
+      const sec = Math.floor(left / 1000);
+      unit('d').textContent = String(Math.floor(sec / 86400));
+      unit('h').textContent = pad(Math.floor((sec % 86400) / 3600));
+      unit('m').textContent = pad(Math.floor((sec % 3600) / 60));
+      unit('s').textContent = pad(sec % 60);
+    };
+    tick();
+    timer = window.setInterval(tick, 1000);
+  });
+
+  // 발매 전에는 D-n, 당일은 D-DAY, 이후에는 OUT NOW
+  document.querySelectorAll<HTMLElement>('[data-release]').forEach((el) => {
+    const at = new Date(el.dataset.release!).getTime();
+    if (Number.isNaN(at)) return;
+    const kst = (t: number) => new Date(t + 9 * 3600 * 1000).toISOString().slice(0, 10);
+    const now = Date.now();
+    const days = Math.round((Date.parse(kst(at)) - Date.parse(kst(now))) / 86400000);
+    el.textContent = now >= at ? 'OUT NOW' : days > 0 ? `D-${days}` : 'D-DAY';
+    el.hidden = false;
+  });
+</script>
+
+<style>
+  /* 새 앨범 소식이라 연한 노랑 띠로 구분한다 */
+  .album-section {
+    background: var(--accent-soft);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+
+  .player {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+    max-width: 520px;
+    width: 100%;
+    justify-self: center;
+  }
+  .cover {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    box-shadow: 10px 10px 0 var(--brand-shadow);
+    transition: transform 0.3s ease;
+  }
+  .cover:hover img {
+    transform: translate(-2px, -2px);
+  }
+  /* 커버 가운데 글자를 가리지 않게 오른쪽 아래에 둔다 */
+  .state {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--brand-yellow);
+    box-shadow: 3px 3px 0 var(--brand-shadow);
+    display: grid;
+    place-items: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .icon-play {
+    margin-left: 6px;
+    border-left: 24px solid var(--brand-shadow);
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+  }
+  .icon-pause {
+    display: none;
+    width: 24px;
+    height: 28px;
+    border-left: 8px solid var(--brand-shadow);
+    border-right: 8px solid var(--brand-shadow);
+  }
+  [data-playing] .icon-play {
+    display: none;
+  }
+  [data-playing] .icon-pause {
+    display: block;
+  }
+  /* 재생 중에는 버튼을 숨기고, 커버에 마우스를 올리면 일시정지 버튼이 보인다 */
+  [data-playing] .state {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  [data-playing] .cover:hover .state,
+  [data-playing] .cover:focus-visible .state {
+    opacity: 1;
+    transform: none;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .time {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 2.8em;
+  }
+  .time:last-child {
+    text-align: right;
+  }
+  .progress {
+    --pct: 0%;
+    width: 100%;
+    height: 4px;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--accent) var(--pct), var(--line) var(--pct));
+    cursor: pointer;
+  }
+  .progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .progress::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+
+  .info {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+  .label {
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .title {
+    font-size: clamp(2.6rem, 1.6rem + 4vw, 4.4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    display: grid;
+    gap: 6px;
+  }
+  .title span {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.42em;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+  .release {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--step-1);
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  .dday {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--brand-yellow);
+    color: var(--brand-shadow);
+    box-shadow: 2px 2px 0 var(--brand-shadow);
+  }
+  .dday[hidden] {
+    display: none;
+  }
+  .hint {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .countdown {
+    display: grid;
+    gap: 8px;
+    margin-block: 8px 4px;
+  }
+  .countdown[hidden] {
+    display: none;
+  }
+  .cd-label {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .cd-units {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .cd-units li {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    min-width: 72px;
+    padding: 12px 10px 10px;
+    background: var(--bg);
+    border: 2px solid var(--brand-shadow);
+    border-radius: 12px;
+    box-shadow: 3px 3px 0 var(--brand-shadow);
+  }
+  .cd-units b {
+    font-family: var(--font-mono);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .cd-units span {
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+  @media (max-width: 400px) {
+    .cd-units {
+      gap: 8px;
+    }
+    .cd-units li {
+      min-width: 0;
+      flex: 1;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .player {
+      max-width: 440px;
+      padding-right: 10px;
+    }
+  }
+</style>
