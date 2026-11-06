@@ -177,6 +177,18 @@ export const fanart = [
     width: 900,
     height: 1354,
   },
+  {
+    image: '/images/fanart-band-portrait.jpg',
+    alt: '기타, 베이스, 드럼 스틱, 건반과 함께 모여 앉은 이플랫세븐을 크레파스 그림체로 그린 팬아트',
+    width: 900,
+    height: 1200,
+  },
+  {
+    image: '/images/fanart-vocal-mic.jpg',
+    alt: '스탠드 마이크 앞에 앉아 눈을 감고 노래하는 보컬을 크레파스 그림체로 그린 팬아트',
+    width: 900,
+    height: 1354,
+  },
 ];
 
 /** 섭외 안내 */
