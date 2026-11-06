@@ -43,21 +43,31 @@ import { site, videos, links, album } from '../data/site';
     </div>
 
     <div class="photo slider" data-slider data-autoplay="5000" aria-roledescription="carousel" aria-label="단체 사진">
-      <div class="track" data-track tabindex="0">
+      <div class:list={['stage', { single: site.teamPhotos.length < 2 }]}>
+        {/* 사진 뒤에 다음 사진을 흐리게 깔아, 카드가 겹쳐 있는 것처럼 보이게 한다 */}
         {
-          site.teamPhotos.map((p, i) => (
-            <figure class="slide">
-              <img
-                src={p.src}
-                alt={p.alt}
-                width="1200"
-                height="1200"
-                fetchpriority={i === 0 ? 'high' : 'low'}
-                decoding="async"
-              />
-            </figure>
-          ))
+          site.teamPhotos.length > 1 && (
+            <div class="peek" aria-hidden="true">
+              <img data-peek src={site.teamPhotos[1].src} alt="" width="1200" height="1200" decoding="async" />
+            </div>
+          )
         }
+        <div class="track" data-track tabindex="0">
+          {
+            site.teamPhotos.map((p, i) => (
+              <figure class="slide">
+                <img
+                  src={p.src}
+                  alt={p.alt}
+                  width="1200"
+                  height="1200"
+                  fetchpriority={i === 0 ? 'high' : 'low'}
+                  decoding="async"
+                />
+              </figure>
+            ))
+          }
+        </div>
       </div>
 
       <div class="slider-controls">
@@ -76,6 +86,34 @@ import { site, videos, links, album } from '../data/site';
 <script>
   import { initSliders } from '../scripts/slider';
   initSliders();
+
+  // 뒤에 깔린 흐린 사진은 항상 지금 사진의 다음 장을 보여 준다
+  const heroTrack = document.querySelector<HTMLElement>('.hero [data-track]');
+  const peek = document.querySelector<HTMLImageElement>('.hero [data-peek]');
+  if (heroTrack && peek) {
+    const srcs = Array.from(heroTrack.querySelectorAll('img')).map((img) => img.currentSrc || img.src);
+    let shown = -1;
+    let fade = 0;
+    const sync = () => {
+      const i = Math.round(heroTrack.scrollLeft / Math.max(1, heroTrack.clientWidth));
+      const next = (i + 1) % srcs.length;
+      if (next === shown) return;
+      const first = shown === -1;
+      shown = next;
+      window.clearTimeout(fade);
+      if (first) {
+        peek.src = srcs[next];
+        return;
+      }
+      peek.classList.add('swap');
+      fade = window.setTimeout(() => {
+        peek.src = srcs[next];
+        peek.classList.remove('swap');
+      }, 180);
+    };
+    heroTrack.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+    sync();
+  }
 
   // 앨범 아이콘 배지: 발매 전에는 D-n, 당일은 D-DAY, 발매 후에는 NEW (한국 시간 기준 날짜)
   document.querySelectorAll<HTMLElement>('[data-hero-dday]').forEach((el) => {
@@ -197,17 +235,49 @@ import { site, videos, links, album } from '../data/site';
     object-fit: cover;
   }
 
-  /* 단체 사진 슬라이드. 로고 글자처럼 사진 틀 뒤에 검은 그림자를 둔다 */
+  /* 단체 사진 슬라이드. 사진 뒤 오른쪽 아래로 다음 사진이 흐리게 겹쳐 보인다 */
   .photo {
+    --peek: clamp(14px, 2.2vw, 24px);
     min-width: 0;
-    padding: 0 10px 0 0;
+    padding: 0 var(--peek) 0 0;
+  }
+  .stage {
+    position: relative;
+    isolation: isolate;
+    margin-bottom: var(--peek);
   }
   .photo .track {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 100%;
     border-radius: var(--radius);
+  }
+  /* 사진이 한 장뿐이면 예전처럼 검은 그림자 */
+  .stage.single .track {
     box-shadow: 10px 10px 0 var(--brand-shadow);
+  }
+  .peek {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: translate(var(--peek), var(--peek));
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--brand-shadow);
+    box-shadow: 0 10px 24px rgba(1, 11, 9, 0.18);
+  }
+  .peek img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 가장자리가 흐려져 비지 않도록 조금 키운다 */
+    transform: scale(1.06);
+    filter: blur(3px) brightness(0.88);
+    transition: opacity 0.18s ease;
+  }
+  .peek img.swap {
+    opacity: 0;
   }
   .photo .slide {
     margin: 0;
