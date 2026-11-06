@@ -1,37 +1,71 @@
 ---
-import { site, videos } from '../data/site';
+import SocialIcon from './SocialIcon.astro';
+import { site, videos, links, album } from '../data/site';
 ---
 
 <section class="hero" id="top">
   <div class="container grid">
     <div class="copy">
-      <p class="eyebrow">{site.nameKo} · Daejeon</p>
+      <p class="eyebrow">{site.nameKo}</p>
       <h1 class="word">
         <img src="/images/logo-wordmark.png" alt={`${site.name} ${site.nameKo}`} width="749" height="145" fetchpriority="high" />
       </h1>
-      <p class="tagline">{site.tagline}</p>
+      <p class="tagline">{site.heroTagline}</p>
       <ul class="scenes" aria-label="주요 공연 현장">
         {site.scenes.map((s) => <li>{s}</li>)}
       </ul>
       <div class="actions">
-        <a class="btn btn--brand" href="#booking">공연 섭외 문의</a>
+        <a class="btn btn--brand" href="#booking" data-soon>공연 섭외 문의</a>
         <a class="btn btn--ghost" href={videos.length ? '#videos' : '#about'}>
           {videos.length ? '공연 영상 보기' : '팀 소개 보기'}
         </a>
       </div>
+      <nav class="quick" aria-label="바로가기">
+        {
+          links.youtube && (
+            <a href={links.youtube} target="_blank" rel="noopener" aria-label="유튜브 채널" title="YouTube">
+              <SocialIcon name="youtube" size={26} />
+            </a>
+          )
+        }
+        {
+          links.instagram && (
+            <a href={links.instagram} target="_blank" rel="noopener" aria-label="인스타그램" title="Instagram">
+              <SocialIcon name="instagram" size={24} />
+            </a>
+          )
+        }
+        <a class="album" href="#album" aria-label={`${album.label} ${album.title} 듣기`} title={`${album.label} ${album.title}`}>
+          <img src={album.cover} alt="" width="28" height="28" />
+          <span class="dday" data-hero-dday={album.releaseAt} hidden></span>
+        </a>
+      </nav>
     </div>
 
     <figure class="photo">
       <img
         src={site.teamPhoto}
         alt={`${site.nameKo} 멤버 단체 사진`}
-        width="1220"
-        height="1069"
+        width="1200"
+        height="1200"
         fetchpriority="high"
       />
     </figure>
   </div>
 </section>
+
+<script>
+  // 앨범 아이콘 배지: 발매 전에는 D-n, 당일은 D-DAY, 발매 후에는 NEW (한국 시간 기준 날짜)
+  document.querySelectorAll<HTMLElement>('[data-hero-dday]').forEach((el) => {
+    const at = new Date(el.dataset.heroDday!).getTime();
+    if (Number.isNaN(at)) return;
+    const kstDay = (t: number) => Date.parse(new Date(t + 9 * 3600 * 1000).toISOString().slice(0, 10));
+    const now = Date.now();
+    const days = Math.round((kstDay(at) - kstDay(now)) / 86400000);
+    el.textContent = now >= at ? 'NEW' : days > 0 ? `D-${days}` : 'D-DAY';
+    el.hidden = false;
+  });
+</script>
 
 <style>
   .hero {
@@ -92,6 +126,55 @@ import { site, videos } from '../data/site';
     border-color: var(--hero-muted);
   }
 
+  .quick {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .quick a {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .quick a:hover {
+    transform: translate(-1px, -1px);
+    border-color: var(--brand-shadow);
+    box-shadow: 3px 3px 0 var(--brand-shadow);
+  }
+  .quick .album {
+    position: relative;
+  }
+  .dday {
+    position: absolute;
+    top: -9px;
+    right: -12px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--brand-yellow);
+    color: var(--brand-shadow);
+    box-shadow: 2px 2px 0 var(--brand-shadow);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .dday[hidden] {
+    display: none;
+  }
+  .quick .album img {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
   /* 로고 글자처럼 사진 뒤에도 검은 그림자를 둔다 */
   .photo {
     margin: 0;
@@ -101,7 +184,7 @@ import { site, videos } from '../data/site';
   .photo img {
     width: 100%;
     height: auto;
-    aspect-ratio: 1220 / 1069;
+    aspect-ratio: 1;
     object-fit: cover;
     border-radius: var(--radius);
     box-shadow: 10px 10px 0 var(--brand-shadow);
