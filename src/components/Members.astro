@@ -2,7 +2,7 @@
 import { members } from '../data/site';
 
 const counts = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'];
-const heading = counts[members.length] ? `${counts[members.length]} 명의 연주자` : '연주자';
+const heading = counts[members.length] ? `하나의 화음을 만드는 ${counts[members.length]} 명` : '하나의 화음을 만드는 사람들';
 ---
 
 <section class="section" id="members">
@@ -10,7 +10,7 @@ const heading = counts[members.length] ? `${counts[members.length]} 명의 연�
     <div class="section-head">
       <p class="eyebrow">Members</p>
       <h2 class="section-title">{heading}</h2>
-      <p class="section-desc">각자의 악기로 하나의 화음을 만듭니다.</p>
+      <p class="section-desc">각자의 소리가 겹쳐 이플랫세븐의 무대가 됩니다.</p>
     </div>
 
     <ul class="grid">
@@ -27,11 +27,16 @@ const heading = counts[members.length] ? `${counts[members.length]} 명의 연�
                     {m.name ? m.name.slice(0, 1) : String(i + 1).padStart(2, '0')}
                   </span>
                 )}
-                {m.role && <span class="role">{m.role}</span>}
               </div>
               <div class="info">
-                <p class:list={['part', { empty: !m.part }]}>{m.part || '파트 입력 전'}</p>
-                <h3>{name}</h3>
+                <p class:list={['part', { empty: !m.part }]} data-fit>
+                  {m.part || '파트 입력 전'}
+                  {m.partEn && <span class="part-en">({m.partEn})</span>}
+                </p>
+                <h3>
+                  {name}
+                  {m.nameEn && <span class="name-en">{m.nameEn}</span>}
+                </h3>
                 {m.intro && <p class="intro">{m.intro}</p>}
                 {m.career && <p class="career">{m.career}</p>}
                 {m.instagram && (
@@ -47,6 +52,35 @@ const heading = counts[members.length] ? `${counts[members.length]} 명의 연�
     </ul>
   </div>
 </section>
+
+<script>
+  // 파트 이름(한국어 + 영문)이 한 줄에 들어가도록 글자 크기를 줄인다.
+  // 카드마다 크기가 달라 보이지 않게, 가장 긴 것에 맞춘 크기를 모든 카드에 똑같이 쓴다.
+  const parts = Array.from(document.querySelectorAll<HTMLElement>('#members [data-fit]'));
+  const MAX = 13;
+  const MIN = 9;
+  const fit = () => {
+    let size = MAX;
+    parts.forEach((p) => (p.style.fontSize = `${MAX}px`));
+    for (const p of parts) {
+      p.style.fontSize = `${size}px`;
+      while (size > MIN && p.scrollWidth > p.clientWidth) {
+        size -= 0.5;
+        p.style.fontSize = `${size}px`;
+      }
+    }
+    parts.forEach((p) => (p.style.fontSize = `${size}px`));
+  };
+  if (parts.length) {
+    document.fonts?.ready.then(fit);
+    fit();
+    let t = 0;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(fit, 100);
+    });
+  }
+</script>
 
 <style>
   .grid {
@@ -88,28 +122,24 @@ const heading = counts[members.length] ? `${counts[members.length]} 명의 연�
     color: var(--muted);
     opacity: 0.6;
   }
-  .role {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    font-size: var(--step--1);
-    font-weight: 600;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: var(--brand-yellow);
-    color: var(--brand-shadow);
-    box-shadow: 2px 2px 0 var(--brand-shadow);
-  }
   .info {
     display: grid;
     gap: 2px;
   }
+  /* 한국어 오른쪽에 영문. 한 줄을 유지하고, 넘치면 스크립트가 글자 크기를 줄인다 */
   .part {
     font-family: var(--font-mono);
     font-size: var(--step--1);
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     color: var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .part-en {
+    margin-left: 0.35em;
+    color: var(--muted);
+    font-weight: 400;
   }
   .part.empty {
     color: var(--muted);
@@ -117,6 +147,15 @@ const heading = counts[members.length] ? `${counts[members.length]} 명의 연�
   h3 {
     font-size: var(--step-1);
     font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 8px;
+  }
+  .name-en {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--muted);
   }
   .intro {
     color: var(--ink);
