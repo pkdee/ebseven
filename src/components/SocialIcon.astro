@@ -1,0 +1,61 @@
+---
+/**
+ * 인스타그램, 유튜브 공식 아이콘.
+ * 모양은 simple-icons(CC0) 패키지의 공식 브랜드 경로를 그대로 쓰고, 색은 각 브랜드 가이드의 색을 쓴다.
+ * - 인스타그램: 글리프에 공식 그라데이션
+ * - 유튜브: 빨간 재생 버튼 + 흰 삼각형
+ */
+import { siInstagram, siYoutube } from 'simple-icons';
+
+interface Props {
+  name: 'instagram' | 'youtube';
+  size?: number;
+  class?: string;
+}
+const { name, size = 20, class: className } = Astro.props;
+const gid = `ig-grad-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+{
+  name === 'instagram' ? (
+    <svg
+      class:list={['social-icon', className]}
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      role="img"
+      aria-label="Instagram"
+    >
+      <defs>
+        <radialGradient id={gid} cx="30%" cy="107%" r="150%">
+          <stop offset="0%" stop-color="#fdf497" />
+          <stop offset="5%" stop-color="#fdf497" />
+          <stop offset="45%" stop-color="#fd5949" />
+          <stop offset="60%" stop-color="#d6249f" />
+          <stop offset="90%" stop-color="#285aeb" />
+        </radialGradient>
+      </defs>
+      <path d={siInstagram.path} fill={`url(#${gid})`} />
+    </svg>
+  ) : (
+    <svg
+      class:list={['social-icon', className]}
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      role="img"
+      aria-label="YouTube"
+    >
+      <path d={siYoutube.path} fill={`#${siYoutube.hex}`} />
+      <path d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#ffffff" />
+    </svg>
+  )
+}
+
+<style>
+  .social-icon {
+    display: inline-block;
+    flex: none;
+    vertical-align: middle;
+  }
+</style>

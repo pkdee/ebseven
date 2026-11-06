@@ -1,0 +1,175 @@
+---
+import SocialIcon from './SocialIcon.astro';
+import { shows, links } from '../data/site';
+
+// 빌드한 날짜를 기준으로 지난 공연과 다가오는 공연을 나눈다.
+// 정적 사이트라서 일정을 고친 뒤 다시 배포해야 반영된다.
+const today = new Date().toISOString().slice(0, 10);
+const sorted = [...shows].sort((a, b) => a.date.localeCompare(b.date));
+const upcoming = sorted.filter((s) => s.date >= today);
+const past = sorted.filter((s) => s.date < today).reverse().slice(0, 6);
+
+const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+function parts(date: string) {
+  const [y, m, d] = date.split('-').map(Number);
+  const dow = days[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+  return { md: `${String(m).padStart(2, '0')}.${String(d).padStart(2, '0')}`, y, dow };
+}
+---
+
+{shows.length > 0 && (
+<section class="section" id="schedule">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Schedule</p>
+      <h2 class="section-title">공연 일정</h2>
+    </div>
+
+    {
+      upcoming.length === 0 ? (
+        <div class="pending">
+          <b>다음 공연을 준비하고 있습니다</b>
+          {links.instagram && (
+            <a class="ig-link" href={links.instagram} target="_blank" rel="noopener">
+              <SocialIcon name="instagram" size={18} />
+              인스타그램에서 소식 받기
+            </a>
+          )}
+        </div>
+      ) : (
+        <ul class="list">
+          {upcoming.map((s) => {
+            const p = parts(s.date);
+            return (
+              <li class="show">
+                <span class="date">
+                  <b>{p.md}</b>
+                  <span>
+                    {p.y} {p.dow}
+                  </span>
+                </span>
+                <span class="what">
+                  <b>{s.title}</b>
+                  <span>
+                    {s.place}
+                    {s.time && ` · ${s.time}`}
+                  </span>
+                </span>
+                {s.link && (
+                  <a class="btn btn--ghost link" href={s.link} target="_blank" rel="noopener">
+                    자세히
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+
+    {
+      past.length > 0 && (
+        <details class="past">
+          <summary>지난 공연 {past.length}건</summary>
+          <ul>
+            {past.map((s) => (
+              <li>
+                <span class="pd">{s.date.replaceAll('-', '.')}</span> {s.title} <span class="pp">{s.place}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+  </div>
+</section>
+)}
+
+<style>
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  .show {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    padding-block: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .show:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .date {
+    display: grid;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .date b {
+    font-size: var(--step-2);
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+  .date span {
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+  .what {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .what b {
+    font-size: var(--step-1);
+  }
+  .what span {
+    color: var(--muted);
+  }
+  .link {
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: 0.9rem;
+  }
+  .past {
+    margin-top: 28px;
+    color: var(--muted);
+  }
+  .past summary {
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .past ul {
+    margin: 12px 0 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+  }
+  .pd {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+  .pp {
+    font-size: 0.9rem;
+  }
+  .pending a {
+    color: var(--accent);
+  }
+  .ig-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  @media (max-width: 560px) {
+    .show {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .link {
+      justify-self: start;
+    }
+  }
+</style>

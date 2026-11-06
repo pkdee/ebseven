@@ -1,0 +1,119 @@
+---
+import { site, videos } from '../data/site';
+---
+
+<section class="hero" id="top">
+  <div class="container grid">
+    <div class="copy">
+      <p class="eyebrow">{site.nameKo} · Daejeon</p>
+      <h1 class="word">
+        <img src="/images/logo-wordmark.png" alt={`${site.name} ${site.nameKo}`} width="749" height="145" fetchpriority="high" />
+      </h1>
+      <p class="tagline">{site.tagline}</p>
+      <ul class="scenes" aria-label="주요 공연 현장">
+        {site.scenes.map((s) => <li>{s}</li>)}
+      </ul>
+      <div class="actions">
+        <a class="btn btn--brand" href="#booking">공연 섭외 문의</a>
+        <a class="btn btn--ghost" href={videos.length ? '#videos' : '#about'}>
+          {videos.length ? '공연 영상 보기' : '팀 소개 보기'}
+        </a>
+      </div>
+    </div>
+
+    <figure class="photo">
+      <img
+        src={site.teamPhoto}
+        alt={`${site.nameKo} 멤버 단체 사진`}
+        width="1220"
+        height="1069"
+        fetchpriority="high"
+      />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background: var(--hero-bg);
+    color: var(--hero-ink);
+    padding-block: clamp(48px, 8vw, 104px) clamp(56px, 8vw, 104px);
+    overflow: hidden;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(36px, 6vw, 72px);
+    align-items: center;
+  }
+  .copy {
+    display: grid;
+    gap: 20px;
+    min-width: 0;
+  }
+  .eyebrow {
+    color: var(--hero-accent);
+  }
+  .word {
+    line-height: 0;
+  }
+  .word img {
+    width: min(100%, 520px);
+    height: auto;
+  }
+  .tagline {
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .scenes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .scenes li {
+    font-size: var(--step--1);
+    color: var(--hero-muted);
+    border: 1px solid var(--hero-line);
+    border-radius: 999px;
+    padding: 4px 12px;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .actions .btn--ghost {
+    color: var(--hero-ink);
+    border-color: var(--hero-muted);
+  }
+
+  /* 로고 글자처럼 사진 뒤에도 검은 그림자를 둔다 */
+  .photo {
+    margin: 0;
+    min-width: 0;
+    padding: 0 10px 10px 0;
+  }
+  .photo img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1220 / 1069;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: 10px 10px 0 var(--brand-shadow);
+  }
+
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .photo {
+      order: -1;
+      max-width: 560px;
+    }
+  }
+</style>

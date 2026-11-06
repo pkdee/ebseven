@@ -1,0 +1,129 @@
+---
+import SocialIcon from './SocialIcon.astro';
+import { site, links } from '../data/site';
+
+const socials = [
+  links.youtube && { label: 'YouTube', href: links.youtube, icon: 'youtube' },
+  links.instagram && { label: 'Instagram', href: links.instagram, icon: 'instagram' },
+  links.kakao && { label: '카카오톡 채널', href: links.kakao },
+  links.linkpie && { label: 'Linkpie', href: links.linkpie },
+].filter(Boolean) as { label: string; href: string; icon?: 'youtube' | 'instagram' }[];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="brand">
+      <img class="logo" src="/images/logo-wordmark.png" alt={site.name} width="749" height="145" loading="lazy" />
+      <p class="tag">{site.name} · {site.nameKo}</p>
+      <p class="tag">{site.tagline}</p>
+    </div>
+
+    <div class="cols">
+      {
+        socials.length > 0 && (
+          <nav aria-label="SNS">
+            <p class="h">Follow</p>
+            {socials.map((s) => (
+              <a href={s.href} target="_blank" rel="noopener">
+                {s.icon && <SocialIcon name={s.icon} size={20} />}
+                {s.label}
+              </a>
+            ))}
+          </nav>
+        )
+      }
+      <div>
+        <p class="h">Contact</p>
+        {
+          links.phone && (
+            <span>
+              {links.phoneOwner} {links.phone}
+            </span>
+          )
+        }
+        {
+          links.instagram && (
+            <a href={links.instagram} target="_blank" rel="noopener">
+              <SocialIcon name="instagram" size={18} />@{links.instagramId} DM
+            </a>
+          )
+        }
+        {links.email && <a href={`mailto:${links.email}`}>{links.email}</a>}
+        <a href="#booking">공연 섭외 문의</a>
+      </div>
+    </div>
+
+    <p class="copy">© {year} {site.name}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    color: var(--hero-ink);
+    padding-block: 64px calc(32px + env(safe-area-inset-bottom, 0px));
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 40px;
+  }
+  .brand {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+  }
+  .logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  .tag {
+    color: var(--hero-muted);
+  }
+  .cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+  }
+  .cols > * {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .h {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--hero-accent);
+  }
+  .cols a,
+  .cols span {
+    color: var(--hero-muted);
+    text-decoration: none;
+  }
+  .cols a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cols a:hover {
+    color: var(--hero-ink);
+  }
+  .copy {
+    grid-column: 1 / -1;
+    font-size: var(--step--1);
+    color: var(--hero-muted);
+    padding-top: 24px;
+    border-top: 1px solid var(--hero-line);
+  }
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

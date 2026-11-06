@@ -1,0 +1,127 @@
+---
+import { history } from '../data/site';
+
+// 최근 날짜가 위로 오게 정렬한 뒤 연도별로 묶는다.
+const sorted = [...history].sort((a, b) => b.date.localeCompare(a.date));
+const years: { year: string; items: typeof history }[] = [];
+for (const item of sorted) {
+  const y = item.date.slice(0, 4);
+  const last = years.at(-1);
+  if (last && last.year === y) last.items.push(item);
+  else years.push({ year: y, items: [item] });
+}
+const md = (date: string) => date.slice(5).replace('-', '.');
+---
+
+<section class="section" id="history">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">History</p>
+      <h2 class="section-title">함께한 무대</h2>
+    </div>
+
+    {
+      years.length === 0 ? (
+        <div class="pending">
+          <b>대표 이력을 정리하고 있습니다</b>
+          <span>지역축제, 문화행사, 협업 아티스트 무대가 곧 추가됩니다.</span>
+        </div>
+      ) : (
+        <ol class="years">
+          {years.map((y) => (
+            <li class="year">
+              <span class="label">{y.year}</span>
+              <ul>
+                {y.items.map((it) => (
+                  <li class:list={['item', { award: it.note }]}>
+                    <span class="date">{md(it.date)}</span>
+                    <span class="what">
+                      <span class="title">{it.title}</span>
+                      {it.note && <span class="note">{it.note}</span>}
+                      {it.host && <span class="host">{it.host}</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .years {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  .year {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 24px;
+    padding-block: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .year:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--step-1);
+    font-weight: 500;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .item {
+    display: grid;
+    grid-template-columns: 3.4em minmax(0, 1fr);
+    gap: 4px 16px;
+    align-items: baseline;
+  }
+  .date {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .what {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    align-items: baseline;
+    min-width: 0;
+  }
+  .title {
+    font-weight: 600;
+  }
+  .host {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .note {
+    font-size: var(--step--1);
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--brand-yellow);
+    color: var(--brand-shadow);
+    box-shadow: 2px 2px 0 var(--brand-shadow);
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .year {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+</style>
