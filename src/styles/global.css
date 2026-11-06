@@ -1,0 +1,214 @@
+/*
+ * 색과 글꼴은 여기 토큰에서만 정한다. 컴포넌트는 토큰만 가져다 쓴다.
+ * 방향: 흰 바탕에 로고의 청록(#0e6d62)과 노랑(#ffcd4a), 글자 뒤 검은 그림자를 포인트로 쓴다.
+ * 방문자의 기기가 어두운 모드여도 항상 흰 테마로 보인다.
+ */
+:root {
+  color-scheme: light;
+
+  --brand-teal: #0e6d62;
+  --brand-yellow: #ffcd4a;
+  --brand-shadow: #010b09;
+
+  --bg: #ffffff;
+  --surface: #f5f8f7;
+  --ink: #10211f;
+  --muted: #566a66;
+  --line: #dfe7e5;
+  --accent: #0e6d62;
+  --accent-ink: #ffffff;
+  --accent-soft: #fff4d6;
+  /* 헤더: 로고와 같은 청록 띠 */
+  --header-bg: var(--brand-teal);
+  --header-ink: #ffffff;
+  --header-muted: #c2e2dc;
+  --header-line: #2f877c;
+  /* 첫 화면, 푸터 */
+  --hero-bg: #ffffff;
+  --hero-ink: #10211f;
+  --hero-muted: #566a66;
+  --hero-line: #dfe7e5;
+  --hero-accent: #0e6d62;
+  --ok: #1f7a4d;
+  --err: #b3261e;
+
+  --font-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.625rem;
+  --step-3: clamp(1.9rem, 1.4rem + 2vw, 2.6rem);
+  --step-5: clamp(3.4rem, 2rem + 7vw, 7rem);
+
+  --gutter: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --maxw: 1120px;
+  --radius: 14px;
+  --header-h: 60px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+p {
+  margin: 0;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
+a {
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 공통 레이아웃 */
+.container {
+  width: 100%;
+  max-width: calc(var(--maxw) + 32px);
+  margin-inline: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+.section {
+  padding-block: clamp(64px, 9vw, 112px);
+}
+.section--surface {
+  background: var(--surface);
+}
+/* 같은 배경의 섹션이 이어지면 경계선을 둔다 */
+.section:not(.section--surface) + .section:not(.section--surface),
+.section--surface + .section--surface {
+  border-top: 1px solid var(--line);
+}
+.section-head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.section-title {
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.section-desc {
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+/* 버튼 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: 600 var(--step-0) / 1 var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+/* 브랜드 영역의 주 버튼: 로고 글자처럼 노랑 + 검은 그림자 */
+.btn--brand {
+  background: var(--brand-yellow);
+  color: var(--brand-shadow);
+  box-shadow: 3px 3px 0 var(--brand-shadow);
+}
+.btn--brand:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--brand-shadow);
+}
+.btn--ghost {
+  border-color: currentColor;
+  background: transparent;
+}
+
+/* 준비 중 칸 */
+.pending {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  text-align: center;
+  padding: 28px 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: var(--step--1);
+}
+.pending b {
+  color: var(--ink);
+  font-size: var(--step-0);
+  font-weight: 600;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
