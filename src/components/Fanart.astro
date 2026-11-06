@@ -1,0 +1,263 @@
+---
+import { fanart } from '../data/site';
+---
+
+{
+  fanart.length > 0 && (
+    <section class="section" id="fanart">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Fan Art</p>
+          <h2 class="section-title">팬아트</h2>
+          <p class="section-desc">이플랫세븐을 그려 주신 그림입니다.</p>
+        </div>
+
+        {/* 한 줄에 4개(태블릿 3개, 휴대폰 2개). 개수가 모자라면 가운데부터 채운다. */}
+        <div class="slider" data-slider aria-roledescription="carousel" aria-label="팬아트">
+          <ul class="track" data-track tabindex="0">
+            {fanart.map((f, i) => (
+              <li class="slide">
+                <a class="thumb" href={f.image} data-index={i} aria-label={`팬아트 ${i + 1} 크게 보기`}>
+                  <img src={f.image} alt={f.alt} width={f.width} height={f.height} loading="lazy" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div class="slider-controls">
+            <button class="slider-nav" type="button" data-prev aria-label="이전 팬아트">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <div class="slider-dots" data-dots role="group" aria-label="팬아트 페이지" />
+            <button class="slider-nav" type="button" data-next aria-label="다음 팬아트">
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 크게 보기: 사진첩처럼 한 장씩 넘겨 본다 */}
+      <dialog class="viewer" data-viewer aria-label="팬아트 크게 보기">
+        <div class="viewer-body">
+          <button class="v-close" type="button" data-close aria-label="닫기">
+            <span aria-hidden="true">×</span>
+          </button>
+          <button class="v-nav v-prev" type="button" data-v-prev aria-label="이전 그림">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <figure class="v-figure">
+            <img data-v-img src="" alt="" />
+            <figcaption>
+              <span data-v-count></span>
+            </figcaption>
+          </figure>
+          <button class="v-nav v-next" type="button" data-v-next aria-label="다음 그림">
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
+      </dialog>
+    </section>
+  )
+}
+
+<script>
+  import { initSliders } from '../scripts/slider';
+  initSliders();
+
+  const viewer = document.querySelector<HTMLDialogElement>('[data-viewer]');
+  if (viewer) {
+    const thumbs = Array.from(document.querySelectorAll<HTMLAnchorElement>('#fanart .thumb'));
+    const img = viewer.querySelector<HTMLImageElement>('[data-v-img]')!;
+    const count = viewer.querySelector<HTMLElement>('[data-v-count]')!;
+    const prev = viewer.querySelector<HTMLButtonElement>('[data-v-prev]')!;
+    const next = viewer.querySelector<HTMLButtonElement>('[data-v-next]')!;
+    let index = 0;
+
+    const show = (i: number) => {
+      index = (i + thumbs.length) % thumbs.length;
+      const src = thumbs[index];
+      const thumbImg = src.querySelector('img')!;
+      img.src = src.href;
+      img.alt = thumbImg.alt;
+      count.textContent = `${index + 1} / ${thumbs.length}`;
+      viewer.toggleAttribute('data-one', thumbs.length < 2);
+    };
+
+    thumbs.forEach((a, i) =>
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        show(i);
+        viewer.showModal();
+      })
+    );
+    prev.addEventListener('click', () => show(index - 1));
+    next.addEventListener('click', () => show(index + 1));
+    viewer.querySelector('[data-close]')!.addEventListener('click', () => viewer.close());
+    // 그림 바깥 어두운 곳을 누르면 닫는다
+    viewer.addEventListener('click', (e) => {
+      if (e.target === viewer || (e.target as HTMLElement).classList.contains('viewer-body')) viewer.close();
+    });
+    viewer.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+    // 손가락으로 옆으로 밀어도 넘어간다
+    let startX = 0;
+    viewer.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    viewer.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+    });
+  }
+</script>
+
+<style>
+
+  .track {
+    --per: 4;
+    --gap: clamp(12px, 2vw, 20px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--gap);
+  }
+  .slide {
+    flex: 0 0 calc((100% - (var(--per) - 1) * var(--gap)) / var(--per));
+  }
+  /* 다 들어가면 가운데 정렬, 넘치면 자동 여백이 0이 되어 처음부터 보인다 */
+  .slide:first-child {
+    margin-left: auto;
+  }
+  .slide:last-child {
+    margin-right: auto;
+  }
+  .thumb {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+    cursor: zoom-in;
+  }
+  .thumb img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.3s ease;
+  }
+  .thumb:hover img {
+    transform: scale(1.03);
+  }
+
+  /* 크게 보기 */
+  .viewer {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+  }
+  .viewer::backdrop {
+    background: rgba(1, 11, 9, 0.88);
+  }
+  .viewer-body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+      calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  }
+  .v-figure {
+    margin: 0;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    justify-items: center;
+    gap: 12px;
+  }
+  .v-figure img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    align-self: center;
+  }
+  .v-figure figcaption {
+    display: flex;
+    gap: 16px;
+    font-size: var(--step--1);
+    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-mono);
+  }
+  .v-nav,
+  .v-close {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .v-nav:hover,
+  .v-close:hover {
+    background: var(--brand-yellow);
+    color: var(--brand-shadow);
+    border-color: var(--brand-yellow);
+  }
+  .v-nav span {
+    margin-top: -3px;
+  }
+  .v-close {
+    position: absolute;
+    top: calc(8px + env(safe-area-inset-top, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+  }
+  .viewer[data-one] .v-nav {
+    visibility: hidden;
+  }
+  :global(html:has(dialog[open])) {
+    overflow: hidden;
+  }
+
+  @media (max-width: 860px) {
+    .track {
+      --per: 3;
+    }
+  }
+  @media (max-width: 560px) {
+    .track {
+      --per: 2;
+    }
+    .viewer-body {
+      grid-template-columns: 1fr;
+    }
+    .v-nav {
+      position: absolute;
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      z-index: 1;
+    }
+    .v-prev {
+      left: max(16px, env(safe-area-inset-left, 0px));
+    }
+    .v-next {
+      right: max(16px, env(safe-area-inset-right, 0px));
+    }
+  }
+</style>
