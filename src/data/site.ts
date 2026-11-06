@@ -10,8 +10,12 @@ export type Member = {
   name: string;
   /** 악기 파트. 예: 건반, 기타, 베이스, 드럼 */
   part: string;
-  /** 팀 내 역할. 예: 리더 */
+  /** 악기 파트 영문. 화면에는 "파트 (영문)" 으로 보인다 */
+  partEn?: string;
+  /** 팀 내 역할 (지금은 화면에 표시하지 않음) */
   role?: string;
+  /** 영문 이름. 이름 오른쪽에 작게 보인다 */
+  nameEn?: string;
   /** 한 줄 소개 */
   intro?: string;
   /** 전공, 주요 경력 한두 줄 */
@@ -61,8 +65,10 @@ export const site = {
   region: '대전',
   /** 링크 미리보기 이미지 (1200x630 권장). public/ 기준 경로 */
   ogImage: '/images/og.png',
-  /** 첫 화면 단체 사진 */
-  teamPhoto: '/images/team.jpg',
+  /** 첫 화면 한 줄 소개 */
+  heroTagline: '아티스트와 관객, 지역과 음악을 잇는 밴드팀',
+  /** 첫 화면 단체 사진 (1:1) */
+  teamPhoto: '/images/team-2026.jpg',
 };
 
 export const about = {
@@ -73,22 +79,6 @@ export const about = {
   ],
   nameStory:
     "팀명 '이플랫세븐'은 음악 코드 E♭7에서 착안했습니다. 다양한 아티스트와 함께 조화를 만들어간다는 의미를 담고 있습니다.",
-};
-
-export const sound = {
-  lead: '펑크(Funk)를 중심으로 재즈의 감각을 더한, 에너지 넘치는 밴드 사운드를 추구합니다.',
-  body: [
-    '친숙한 대중음악이라도 팀만의 그루브와 개성 있는 편곡을 더해, 익숙한 곡도 새로운 매력으로 전달하는 것을 목표로 합니다.',
-    '아티스트 협업으로 팀 음원 발매도 진행하고 있습니다.',
-  ],
-  songs: [
-    { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars' },
-    { title: 'I Wish', artist: 'Stevie Wonder' },
-    { title: 'The Yellow Jacket', artist: 'Shaun Martin' },
-    { title: 'Kerning City', artist: 'MapleStory OST' },
-  ],
-  /** 함께 무대와 영상을 만든 보컬 아티스트 (멤버가 아닌 협업 보컬) */
-  collaborators: ['송아 (Song A)'],
 };
 
 export const links = {
@@ -105,12 +95,12 @@ export const links = {
 
 /** 멤버. 순서대로 화면에 나온다. */
 export const members: Member[] = [
-  { name: '고상준', part: '신디사이저', role: '리더', photo: '/images/member-ko-sangjun.jpg' },
-  { name: '박경준', part: '메인기타', photo: '/images/member-park-gyeongjun.jpg' },
-  { name: '김정원', part: '메인건반', photo: '/images/member-kim-jeongwon.jpg' },
-  { name: '서은평', part: '베이스', photo: '/images/member-seo-eunpyeong.jpg' },
-  { name: '지성민', part: '드럼', photo: '/images/member-ji-seongmin.jpg' },
-  { name: '채온', part: '보컬', intro: 'Chaeon', photo: '/images/member-chaeon.jpg' },
+  { name: '고상준', part: '신디사이저', partEn: 'Synthesizer', photo: '/images/member-ko-sangjun.jpg' },
+  { name: '박경준', part: '메인기타', partEn: 'Main Guitar', photo: '/images/member-park-gyeongjun.jpg' },
+  { name: '채온', part: '보컬', partEn: 'Vocal', nameEn: 'Chaeon', photo: '/images/member-chaeon.jpg' },
+  { name: '서은평', part: '베이스', partEn: 'Bass', photo: '/images/member-seo-eunpyeong.jpg' },
+  { name: '지성민', part: '드럼', partEn: 'Drums', photo: '/images/member-ji-seongmin.jpg' },
+  { name: '김정원', part: '메인건반', partEn: 'Main Keys', photo: '/images/member-kim-jeongwon.jpg' },
 ];
 
 /** 대표 이력. 순서는 상관없다. 화면에서는 최근 날짜가 위로 온다. */
@@ -131,11 +121,56 @@ export const shows: Show[] = [
 
 /** 대표 영상. 첫 번째 영상이 크게 보인다. */
 export const videos: Video[] = [
-  { youtubeId: 'iQfExoV7ZV0', title: '[Live] I Wish - Stevie Wonder', with: '송아 (Song A)' },
   { youtubeId: 'WexAouF1BY4', title: '[Band Cover] Uptown Funk - Mark Ronson', with: '채온 (Chaeon)' },
-  { youtubeId: 'bJeEJ1psajo', title: '[Live] Love Never Felt So Good - Michael Jackson' },
+  { youtubeId: 'iQfExoV7ZV0', title: '[Live] I Wish - Stevie Wonder', with: '송아 (Song A)' },
+  { youtubeId: 'bJeEJ1psajo', title: '[Live] Love Never Felt So Good - Michael Jackson', with: '채온 (Chaeon)' },
   { youtubeId: 'qi_5Ny-wAic', title: '[Band Cover] 바라봐줘요 - 죠지' },
   { youtubeId: 'oOGVtiqAgVY', title: '[Band Cover] After LIKE - IVE', with: '채온 (Chaeon)' },
+];
+
+/**
+ * 쇼츠. 인스타그램 릴스와 같은 영상이 유튜브 쇼츠(@ebseven012/shorts)에도 올라와 있어서 유튜브 것을 쓴다.
+ * 유튜브 쇼츠 주소 youtube.com/shorts/XXXX 의 XXXX 부분을 youtubeId 에 적는다.
+ * 2026-11-06 기준 조회수가 많은 순서.
+ */
+export const shorts: Video[] = [
+  { youtubeId: 'e6Mg9BZFSO0', title: '눈빛을 보면 난 알 수가 있어' },
+  { youtubeId: 'FtxK9ODwoKc', title: '서울의 달 Band Cover' },
+  { youtubeId: 'DTjA1QafTp8', title: '7번국도 - 정미조 Cover' },
+  { youtubeId: 'JQiw7hsfE7E', title: 'Love Theory Ebseven ver.' },
+  { youtubeId: '-8Evl23MbKs', title: '펑크하면 이곡이지' },
+  { youtubeId: 'apctUrwjruU', title: 'Best Part - H.E.R. Cover' },
+  { youtubeId: 'eFp9NwmMcB4', title: '같애 - 거니 Band Cover' },
+  { youtubeId: 'uxmBzQaeweg', title: 'Ebseven 보컬트리오' },
+];
+
+/** 새 앨범. 커버를 누르면 audio 파일이 재생된다. */
+export const album = {
+  label: '1집 앨범',
+  title: '피어나',
+  titleEn: 'blooming',
+  /** 발매 시각 (한국 시간). 이 시각 전에는 남은 날짜가, 이후에는 "발매"가 보인다. */
+  releaseAt: '2026-11-13T12:00:00+09:00',
+  releaseText: '11월 13일(금) 12:00 발매',
+  cover: '/images/album-blooming.jpg',
+  /** 원본: 찐찐찐찐 MASTER.wav 를 AAC로 변환 */
+  audio: '/audio/blooming-track.m4a',
+};
+
+/** 팬아트 */
+export const fanart = [
+  {
+    image: '/images/fanart-artist-profile.jpg',
+    alt: '이플랫세븐 여섯 멤버를 색연필 그림체로 그린 Artist Profile 팬아트',
+    width: 900,
+    height: 1455,
+  },
+  {
+    image: '/images/fanart-rooftop-live.jpg',
+    alt: '꽃이 핀 옥상에서 이플랫세븐이 밤하늘 아래 공연하는 모습을 그린 팬아트',
+    width: 900,
+    height: 1354,
+  },
 ];
 
 /** 섭외 안내 */
@@ -150,7 +185,7 @@ export const booking = {
     { en: 'Music Projects', ko: '음악 관계자와의 협업 및 공연 프로젝트' },
   ],
   details: [
-    { label: '활동 지역', value: '대전 중심' },
+    { label: '활동 지역', value: '전국' },
     { label: '공연 시간', value: '' }, // 예: '30분 ~ 90분 (협의)'
     { label: '음향 장비', value: '' }, // 예: '소규모 공연은 자체 장비 지참 가능'
   ],
