@@ -3,11 +3,9 @@ import SocialIcon from './SocialIcon.astro';
 import { site, links } from '../data/site';
 
 const socials = [
-  links.youtube && { label: 'YouTube', href: links.youtube, icon: 'youtube' },
-  links.instagram && { label: 'Instagram', href: links.instagram, icon: 'instagram' },
-  links.kakao && { label: '카카오톡 채널', href: links.kakao },
-  links.linkpie && { label: 'Linkpie', href: links.linkpie },
-].filter(Boolean) as { label: string; href: string; icon?: 'youtube' | 'instagram' }[];
+  links.youtube && { label: 'ebseven 유튜브 채널', href: links.youtube, icon: 'youtube' },
+  links.instagram && { label: 'ebseven 인스타그램', href: links.instagram, icon: 'instagram' },
+].filter(Boolean) as { label: string; href: string; icon: 'youtube' | 'instagram' }[];
 
 const year = new Date().getFullYear();
 ---
@@ -20,40 +18,17 @@ const year = new Date().getFullYear();
       <p class="tag">{site.tagline}</p>
     </div>
 
-    <div class="cols">
-      {
-        socials.length > 0 && (
-          <nav aria-label="SNS">
-            <p class="h">Follow</p>
-            {socials.map((s) => (
-              <a href={s.href} target="_blank" rel="noopener">
-                {s.icon && <SocialIcon name={s.icon} size={20} />}
-                {s.label}
-              </a>
-            ))}
-          </nav>
-        )
-      }
-      <div>
-        <p class="h">Contact</p>
-        {
-          links.phone && (
-            <span>
-              {links.phoneOwner} {links.phone}
-            </span>
-          )
-        }
-        {
-          links.instagram && (
-            <a href={links.instagram} target="_blank" rel="noopener">
-              <SocialIcon name="instagram" size={18} />@{links.instagramId} DM
+    {
+      socials.length > 0 && (
+        <nav class="socials" aria-label="SNS">
+          {socials.map((s) => (
+            <a href={s.href} target="_blank" rel="noopener" aria-label={s.label} title={s.label}>
+              <SocialIcon name={s.icon} size={32} />
             </a>
-          )
-        }
-        {links.email && <a href={`mailto:${links.email}`}>{links.email}</a>}
-        <a href="#booking">공연 섭외 문의</a>
-      </div>
-    </div>
+          ))}
+        </nav>
+      )
+    }
 
     <p class="copy">© {year} {site.name}. All rights reserved.</p>
   </div>
@@ -84,35 +59,23 @@ const year = new Date().getFullYear();
   .tag {
     color: var(--hero-muted);
   }
-  .cols {
+  .socials {
     display: flex;
-    flex-wrap: wrap;
-    gap: 48px;
-  }
-  .cols > * {
-    display: grid;
-    gap: 8px;
-    align-content: start;
-  }
-  .h {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--hero-accent);
-  }
-  .cols a,
-  .cols span {
-    color: var(--hero-muted);
-    text-decoration: none;
-  }
-  .cols a {
-    display: inline-flex;
+    gap: 16px;
     align-items: center;
-    gap: 8px;
+    align-self: start;
   }
-  .cols a:hover {
-    color: var(--hero-ink);
+  .socials a {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  .socials a:hover {
+    background: var(--bg);
+    transform: translateY(-2px);
   }
   .copy {
     grid-column: 1 / -1;
