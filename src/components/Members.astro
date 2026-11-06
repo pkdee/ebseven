@@ -21,7 +21,7 @@ const heading = counts[members.length] ? `하나의 화음을 만드는 ${counts
             <li class="card">
               <div class="photo">
                 {m.photo ? (
-                  <img src={m.photo} alt={`${m.part} ${name}`} loading="lazy" width="800" height="1093" />
+                  <img src={m.photo} alt={`${m.part} ${name}`} loading="lazy" width="800" height="1000" />
                 ) : (
                   <span class="ph" aria-hidden="true">
                     {m.name ? m.name.slice(0, 1) : String(i + 1).padStart(2, '0')}
