@@ -1,0 +1,117 @@
+---
+/**
+ * "준비중입니다." 안내창.
+ * data-soon 속성이 붙은 버튼이나 링크를 누르면 시스템 알림 대신 이 창이 뜬다.
+ */
+---
+
+<dialog class="soon" data-soon-dialog aria-labelledby="soon-title" aria-describedby="soon-desc">
+  <div class="card">
+    <img class="logo" src="/images/logo-wordmark.png" alt="" width="749" height="145" />
+    <p class="badge">Coming Soon</p>
+    <h2 id="soon-title">준비중입니다.</h2>
+    <p id="soon-desc" class="desc">
+      섭외 문의 창구를 준비하고 있어요.<br />
+      조금만 기다려 주세요.
+    </p>
+    <form method="dialog">
+      <button class="btn btn--brand ok" type="submit" autofocus>확인</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-soon-dialog]');
+  if (dialog) {
+    document.addEventListener('click', (e) => {
+      const el = (e.target as HTMLElement).closest('[data-soon]');
+      if (!el) return;
+      e.preventDefault();
+      el.closest('details')?.removeAttribute('open');
+      dialog.showModal();
+    });
+    // 카드 바깥 어두운 곳을 누르면 닫는다
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+</script>
+
+<style>
+  .soon {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    max-width: calc(100vw - 32px);
+  }
+  .soon::backdrop {
+    background: rgba(1, 11, 9, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .soon[open] .card {
+    animation: pop 0.28s cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+  .soon[open]::backdrop {
+    animation: fade 0.2s ease;
+  }
+  @keyframes pop {
+    from {
+      transform: translateY(12px) scale(0.94);
+      opacity: 0;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .card {
+    width: min(360px, calc(100vw - 32px));
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 30px 26px 24px;
+    text-align: center;
+    color: var(--ink);
+    background: var(--bg);
+    border: 2px solid var(--brand-shadow);
+    border-radius: 20px;
+    box-shadow: 8px 8px 0 var(--brand-shadow);
+  }
+  .logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--brand-teal);
+    color: #ffffff;
+  }
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  form {
+    width: 100%;
+    margin-top: 12px;
+  }
+  .ok {
+    width: 100%;
+  }
+</style>

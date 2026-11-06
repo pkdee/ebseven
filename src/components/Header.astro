@@ -2,11 +2,12 @@
 import { shows } from '../data/site';
 
 const nav = [
+  { href: '#album', label: '앨범' },
   { href: '#about', label: '소개' },
   { href: '#members', label: '멤버' },
-  { href: '#sound', label: '사운드' },
   { href: '#history', label: '이력' },
   { href: '#videos', label: '영상' },
+  { href: '#fanart', label: '팬아트' },
   // 등록된 공연이 없으면 일정 섹션이 숨겨지므로 메뉴에서도 뺀다.
   ...(shows.length ? [{ href: '#schedule', label: '일정' }] : []),
 ];
@@ -22,7 +23,7 @@ const nav = [
       {nav.map((n) => <a href={n.href}>{n.label}</a>)}
     </nav>
 
-    <a class="btn btn--brand cta" href="#booking">섭외 문의</a>
+    <a class="btn btn--brand cta" href="#booking" data-soon>섭외 문의</a>
 
     <details class="menu">
       <summary aria-label="메뉴 열기">
@@ -30,7 +31,7 @@ const nav = [
       </summary>
       <nav aria-label="모바일 메뉴">
         {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-        <a href="#booking">섭외 문의</a>
+        <a href="#booking" data-soon>섭외 문의</a>
       </nav>
     </details>
   </div>
@@ -143,7 +144,7 @@ const nav = [
     background: var(--header-line);
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 900px) {
     .nav {
       display: none;
     }
