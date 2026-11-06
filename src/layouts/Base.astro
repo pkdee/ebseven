@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import { site, links, members } from '../data/site';
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -67,5 +68,7 @@ const jsonLd = {
   </head>
   <body>
     <slot />
+    {/* Vercel 배포 환경에서 실제 방문자의 페이지 속도를 수집한다 */}
+    <SpeedInsights />
   </body>
 </html>
