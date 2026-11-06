@@ -67,8 +67,12 @@ export const site = {
   ogImage: '/images/og.png',
   /** 첫 화면 한 줄 소개 */
   heroTagline: '아티스트와 관객, 지역과 음악을 잇는 밴드팀',
-  /** 첫 화면 단체 사진 (1:1) */
-  teamPhoto: '/images/team-2026.jpg',
+  /** 첫 화면 단체 사진 (1:1). 여러 장이면 슬라이드로 넘어간다. 첫 번째가 먼저 보인다. */
+  teamPhotos: [
+    { src: '/images/team-1.jpg', alt: '계단에 모여 앉아 위를 올려다보는 이플랫세븐 여섯 멤버' },
+    { src: '/images/team-2.jpg', alt: '도심이 내려다보이는 옥상 잔디에 앉은 이플랫세븐 여섯 멤버' },
+    { src: '/images/team-3.jpg', alt: '옥상 잔디 위 악기 사이에 둘러앉은 이플랫세븐 여섯 멤버' },
+  ],
 };
 
 export const about = {

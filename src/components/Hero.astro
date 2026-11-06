@@ -42,19 +42,41 @@ import { site, videos, links, album } from '../data/site';
       </nav>
     </div>
 
-    <figure class="photo">
-      <img
-        src={site.teamPhoto}
-        alt={`${site.nameKo} 멤버 단체 사진`}
-        width="1200"
-        height="1200"
-        fetchpriority="high"
-      />
-    </figure>
+    <div class="photo slider" data-slider data-autoplay="5000" aria-roledescription="carousel" aria-label="단체 사진">
+      <div class="track" data-track tabindex="0">
+        {
+          site.teamPhotos.map((p, i) => (
+            <figure class="slide">
+              <img
+                src={p.src}
+                alt={p.alt}
+                width="1200"
+                height="1200"
+                fetchpriority={i === 0 ? 'high' : 'low'}
+                decoding="async"
+              />
+            </figure>
+          ))
+        }
+      </div>
+
+      <div class="slider-controls">
+        <button class="slider-nav" type="button" data-prev aria-label="이전 사진">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <div class="slider-dots" data-dots role="group" aria-label="사진 페이지"></div>
+        <button class="slider-nav" type="button" data-next aria-label="다음 사진">
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 
 <script>
+  import { initSliders } from '../scripts/slider';
+  initSliders();
+
   // 앨범 아이콘 배지: 발매 전에는 D-n, 당일은 D-DAY, 발매 후에는 NEW (한국 시간 기준 날짜)
   document.querySelectorAll<HTMLElement>('[data-hero-dday]').forEach((el) => {
     const at = new Date(el.dataset.heroDday!).getTime();
@@ -175,19 +197,30 @@ import { site, videos, links, album } from '../data/site';
     object-fit: cover;
   }
 
-  /* 로고 글자처럼 사진 뒤에도 검은 그림자를 둔다 */
+  /* 단체 사진 슬라이드. 로고 글자처럼 사진 틀 뒤에 검은 그림자를 둔다 */
   .photo {
-    margin: 0;
     min-width: 0;
-    padding: 0 10px 10px 0;
+    padding: 0 10px 0 0;
+  }
+  .photo .track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    border-radius: var(--radius);
+    box-shadow: 10px 10px 0 var(--brand-shadow);
+  }
+  .photo .slide {
+    margin: 0;
   }
   .photo img {
+    display: block;
     width: 100%;
     height: auto;
     aspect-ratio: 1;
     object-fit: cover;
-    border-radius: var(--radius);
-    box-shadow: 10px 10px 0 var(--brand-shadow);
+  }
+  .photo .slider-controls {
+    margin-top: 6px;
   }
 
   @media (max-width: 860px) {

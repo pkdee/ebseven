@@ -67,13 +67,13 @@ src/
   data/site.ts        사이트 내용 전부
   pages/index.astro   섹션 순서
   components/         섹션별 화면 (Hero, Album, About, Members, History, Videos, Fanart, Booking ...)
-  scripts/slider.ts   영상, 팬아트 슬라이드
+  scripts/slider.ts   첫 화면 사진, 영상, 팬아트 슬라이드
   styles/global.css   색, 글꼴, 공통 스타일
 public/               사진, 파비콘
   images/logo-original.png   받은 로고 원본 (1080x1080)
   images/logo-wordmark.png   원본에서 배경만 투명하게 뺀 글자 로고 (헤더, 첫 화면, 푸터)
   images/og.png              링크 공유 미리보기 이미지 (1200x630)
-  images/team-2026.jpg       첫 화면 6인 단체 사진
+  images/team-*.jpg          첫 화면 단체 사진 슬라이드 (1200x1200)
   images/member-*.jpg        멤버 사진
 linkpie-plan.md       Linkpie 프로필 구성안 (참고용)
 linkpie-draft.html    Linkpie 프로필 초안 화면 (참고용)
