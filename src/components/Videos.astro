@@ -1,6 +1,9 @@
 ---
 import SocialIcon from './SocialIcon.astro';
-import { videos, links } from '../data/site';
+import VideoCard from './VideoCard.astro';
+import { videos, shorts, links } from '../data/site';
+
+const [main, ...rest] = videos;
 ---
 
 <section class="section section--surface" id="videos">
@@ -11,7 +14,7 @@ import { videos, links } from '../data/site';
     </div>
 
     {
-      videos.length === 0 ? (
+      !main ? (
         <div class="pending">
           <b>공연 영상을 준비하고 있습니다</b>
           {links.youtube && (
@@ -22,32 +25,63 @@ import { videos, links } from '../data/site';
           )}
         </div>
       ) : (
-        <div class="grid">
-          {videos.map((v, i) => (
-            <figure class:list={['video', { main: i === 0 }]}>
-              {/* 썸네일만 먼저 보여주고, 누르면 그때 유튜브 플레이어를 불러온다. */}
-              <button class="yt" type="button" data-id={v.youtubeId} aria-label={`${v.title} 재생`}>
-                <img
-                  src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`}
-                  alt=""
-                  loading="lazy"
-                  width="480"
-                  height="360"
-                />
-                <span class="play" aria-hidden="true" />
-              </button>
-              <figcaption>
-                {v.title}
-                {v.with && <span class="with">with {v.with}</span>}
-              </figcaption>
-            </figure>
-          ))}
+        <div class="stack">
+          <VideoCard video={main} class="main" />
+
+          {rest.length > 0 && (
+            <div class="slider" data-slider data-autoplay="5000" aria-roledescription="carousel" aria-label="다른 공연 영상">
+              <div class="track" data-track tabindex="0">
+                {rest.map((v) => (
+                  <div class="slide">
+                    <VideoCard video={v} />
+                  </div>
+                ))}
+              </div>
+
+              <div class="slider-controls">
+                <button class="slider-nav" type="button" data-prev aria-label="이전 영상">
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <div class="slider-dots" data-dots role="group" aria-label="영상 페이지" />
+                <button class="slider-nav" type="button" data-next aria-label="다음 영상">
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {shorts.length > 0 && (
+            <div class="shorts">
+              <div class="sub-head">
+                <h3>Shorts</h3>
+                <p>인스타그램 릴스와 유튜브 쇼츠에 올린 짧은 영상</p>
+              </div>
+              <div class="slider" data-slider aria-roledescription="carousel" aria-label="쇼츠 영상">
+                <div class="track" data-track tabindex="0">
+                  {shorts.map((v) => (
+                    <div class="slide">
+                      <VideoCard video={v} vertical />
+                    </div>
+                  ))}
+                </div>
+                <div class="slider-controls">
+                  <button class="slider-nav" type="button" data-prev aria-label="이전 쇼츠">
+                    <span aria-hidden="true">‹</span>
+                  </button>
+                  <div class="slider-dots" data-dots role="group" aria-label="쇼츠 페이지" />
+                  <button class="slider-nav" type="button" data-next aria-label="다음 쇼츠">
+                    <span aria-hidden="true">›</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )
     }
 
     {
-      links.youtube && videos.length > 0 && (
+      links.youtube && main && (
         <p class="more">
           <a class="btn btn--ghost yt-link" href={links.youtube} target="_blank" rel="noopener">
             <SocialIcon name="youtube" size={22} />
@@ -60,92 +94,54 @@ import { videos, links } from '../data/site';
 </section>
 
 <script>
-  document.querySelectorAll<HTMLButtonElement>('.yt').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.id;
-      if (!id) return;
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
-      iframe.title = btn.getAttribute('aria-label') ?? '유튜브 영상';
-      iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
-      iframe.allowFullscreen = true;
-      btn.replaceWith(iframe);
-    });
-  });
+  import { initSliders } from '../scripts/slider';
+  initSliders();
 </script>
 
 <style>
-  .grid {
+  .stack {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(20px, 2.4vw, 28px) clamp(16px, 2.4vw, 28px);
+    gap: clamp(28px, 4vw, 44px);
   }
-  .video {
-    margin: 0;
+
+  .track {
     display: grid;
-    gap: 10px;
-    min-width: 0;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - var(--slide-gap)) / 2);
+    --slide-gap: clamp(16px, 2.4vw, 28px);
+    column-gap: var(--slide-gap);
   }
-  .video.main {
-    grid-column: 1 / -1;
-  }
-  .yt,
-  .video :global(iframe) {
-    aspect-ratio: 16 / 9;
-    width: 100%;
-    max-width: 100%;
-    border: 0;
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: block;
-  }
-  .yt {
-    position: relative;
-    padding: 0;
-    cursor: pointer;
-    background: var(--brand-shadow);
-  }
-  .yt img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
-  }
-  .yt:hover img {
-    opacity: 1;
-  }
-  .play {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: var(--brand-yellow);
-    box-shadow: 3px 3px 0 var(--brand-shadow);
-  }
-  .play::after {
-    content: '';
-    position: absolute;
-    left: 27px;
-    top: 22px;
-    border-left: 20px solid var(--brand-shadow);
-    border-top: 12px solid transparent;
-    border-bottom: 12px solid transparent;
-  }
-  figcaption {
-    font-weight: 500;
+
+  .shorts {
     display: grid;
-    gap: 2px;
+    gap: 16px;
+    margin-top: clamp(16px, 3vw, 32px);
   }
-  .with {
-    font-weight: 400;
-    font-size: 0.9rem;
+  .sub-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+  }
+  .sub-head h3 {
+    font-size: var(--step-2);
+    font-weight: 700;
+  }
+  .sub-head p {
     color: var(--muted);
+    font-size: 0.92rem;
+  }
+  /* 쇼츠는 한 줄에 4개(휴대폰 2개) */
+  .shorts .track {
+    grid-auto-columns: calc((100% - 3 * var(--slide-gap)) / 4);
+  }
+  .shorts :global(figcaption) {
+    font-size: 0.92rem;
   }
   .more {
-    margin-top: 28px;
+    margin-top: clamp(32px, 4vw, 44px);
+    display: flex;
+    justify-content: center;
   }
   .yt-link {
     display: inline-flex;
@@ -155,9 +151,14 @@ import { videos, links } from '../data/site';
   .pending a {
     color: var(--accent);
   }
+
   @media (max-width: 640px) {
-    .grid {
-      grid-template-columns: 1fr;
+    /* 휴대폰은 한 개씩, 다음 영상이 살짝 보이게 */
+    .track {
+      grid-auto-columns: 86%;
+    }
+    .shorts .track {
+      grid-auto-columns: calc((100% - var(--slide-gap)) / 2.2);
     }
   }
 </style>

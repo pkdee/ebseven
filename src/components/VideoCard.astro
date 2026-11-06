@@ -1,0 +1,108 @@
+---
+import type { Video } from '../data/site';
+
+interface Props {
+  video: Video;
+  /** 쇼츠처럼 세로 영상이면 true */
+  vertical?: boolean;
+  class?: string;
+}
+const { video: v, vertical = false, class: className } = Astro.props;
+---
+
+<figure class:list={['video', { vertical }, className]}>
+  {/* 썸네일만 먼저 보여주고, 누르면 그때 유튜브 플레이어를 불러온다. */}
+  <button class="yt" type="button" data-id={v.youtubeId} aria-label={`${v.title} 재생`}>
+    <img src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`} alt="" loading="lazy" width="480" height="360" />
+    <span class="play" aria-hidden="true"></span>
+  </button>
+  <figcaption>
+    {v.title}
+    {v.with && <span class="with">with {v.with}</span>}
+  </figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.yt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      if (!id) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+      iframe.title = btn.getAttribute('aria-label') ?? '유튜브 영상';
+      iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      btn.replaceWith(iframe);
+    });
+  });
+</script>
+
+<style>
+  .video {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    min-width: 0;
+  }
+  .yt,
+  .video :global(iframe) {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    max-width: 100%;
+    border: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: block;
+  }
+  .yt {
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+    background: var(--brand-shadow);
+  }
+  /* 세로 영상(쇼츠) */
+  .vertical .yt,
+  .vertical :global(iframe) {
+    aspect-ratio: 9 / 16;
+  }
+  .yt img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+  .yt:hover img {
+    opacity: 1;
+  }
+  .play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: var(--brand-yellow);
+    box-shadow: 3px 3px 0 var(--brand-shadow);
+  }
+  .play::after {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 22px;
+    border-left: 20px solid var(--brand-shadow);
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+  }
+  figcaption {
+    font-weight: 500;
+    display: grid;
+    gap: 2px;
+  }
+  .with {
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+</style>

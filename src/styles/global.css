@@ -189,6 +189,86 @@ a {
   font-weight: 600;
 }
 
+/* 슬라이드 공통 (src/scripts/slider.ts) */
+.slider {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.slider .track {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.slider .track::-webkit-scrollbar {
+  display: none;
+}
+.slider .track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+.slider .slide {
+  scroll-snap-align: start;
+  min-width: 0;
+}
+.slider-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.slider[data-single] .slider-controls {
+  display: none;
+}
+.slider-nav {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 1.6rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+.slider-nav span {
+  margin-top: -3px;
+}
+.slider-nav:hover:not(:disabled) {
+  background: var(--brand-yellow);
+  border-color: var(--brand-shadow);
+}
+.slider-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.slider-dots {
+  display: flex;
+  gap: 8px;
+}
+.slider-dots .dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+.slider-dots .dot[aria-current='true'] {
+  width: 24px;
+  background: var(--accent);
+}
+
+
 .visually-hidden {
   position: absolute;
   width: 1px;
