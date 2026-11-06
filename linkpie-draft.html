@@ -1,0 +1,470 @@
+<title>ebseven Linkpie 초안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 작업 메모 헤더 + 가운데 휴대폰 폭(420px) 프로필 미리보기. 블럭마다 Linkpie 블럭 이름 태그. */
+:root {
+  --bg: #ECEEF2;
+  --surface: #FFFFFF;
+  --ink: #18202E;
+  --muted: #5A6374;
+  --line: #D6DAE2;
+  --accent: #9A6512;
+  --accent-ink: #FFFFFF;
+  --ph: #F6EAD2;
+  --ph-ink: #6E4A0E;
+  --media: #DDE1E8;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1218; --surface: #171C25; --ink: #E6E9EF; --muted: #9AA2B3; --line: #2A313E;
+    --accent: #E0A94A; --accent-ink: #1A1408; --ph: #3A2D14; --ph-ink: #F1CF8E; --media: #232A36;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1218; --surface: #171C25; --ink: #E6E9EF; --muted: #9AA2B3; --line: #2A313E;
+  --accent: #E0A94A; --accent-ink: #1A1408; --ph: #3A2D14; --ph-ink: #F1CF8E; --media: #232A36;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+
+.wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 40px; }
+
+/* 작업 메모 */
+.memo { display: grid; gap: 14px; }
+.memo .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--muted); }
+.memo h1 { font-size: 28px; font-weight: 700; line-height: 1.3; }
+.memo p { color: var(--muted); max-width: 62ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* 휴대폰 미리보기 */
+.phone {
+  width: 100%; max-width: 420px; margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  overflow: hidden;
+  display: grid;
+  gap: 0;
+}
+.block { padding: 18px 20px; display: grid; gap: 10px; }
+.block + .block { border-top: 1px dashed var(--line); }
+.tag {
+  font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px; letter-spacing: .02em;
+}
+.tag::before { content: ""; width: 7px; height: 7px; background: var(--accent); border-radius: 1px; }
+.tag .opt { margin-left: auto; }
+
+.ph {
+  background: var(--ph); color: var(--ph-ink);
+  border-radius: 4px; padding: 0 4px;
+  font-weight: 500;
+}
+.media {
+  background: var(--media); color: var(--muted);
+  border-radius: 12px; display: grid; place-items: center;
+  font-size: 13px; text-align: center; padding: 12px;
+  max-width: 100%;
+}
+
+/* 프로필 */
+.profile { padding: 0 0 22px; gap: 0; }
+.profile .cover { aspect-ratio: 20 / 9; border-radius: 0; }
+.profile .info { padding: 0 20px; display: grid; gap: 8px; justify-items: center; text-align: center; margin-top: -44px; }
+.avatar {
+  width: 88px; height: 88px; border-radius: 50%;
+  border: 4px solid var(--surface);
+  background: var(--ink); color: var(--surface);
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-weight: 500; font-size: 22px;
+}
+.profile .name { font-size: 24px; font-weight: 700; letter-spacing: -.01em; }
+.profile .bio { color: var(--muted); font-size: 14px; }
+.profile .profile-tag { padding: 0 20px 10px; }
+
+/* 링크 모음 */
+.socials { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.social { display: grid; justify-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+.social i {
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1px solid var(--line); display: grid; place-items: center;
+  font-style: normal; font-family: var(--font-mono); font-size: 13px; color: var(--ink);
+}
+
+/* 동영상 */
+.video { aspect-ratio: 16 / 9; position: relative; }
+.video::before {
+  content: ""; width: 54px; height: 54px; border-radius: 50%;
+  background: var(--ink); opacity: .85; grid-area: 1 / 1;
+}
+.video::after {
+  content: ""; grid-area: 1 / 1; margin-left: 5px;
+  border-left: 16px solid var(--surface); border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+}
+.video span { position: absolute; left: 12px; bottom: 10px; right: 12px; text-align: left; }
+.caption { font-size: 13px; color: var(--muted); }
+
+/* 링크 버튼 */
+.btn {
+  display: block; width: 100%; text-align: center;
+  padding: 14px 16px; border-radius: 12px;
+  background: var(--accent); color: var(--accent-ink);
+  font-weight: 600; font-size: 15px; text-decoration: none;
+}
+.btn small { display: block; font-weight: 400; font-size: 12px; opacity: .85; }
+
+/* 텍스트 블럭 */
+.text { display: grid; gap: 12px; }
+.text h2 { font-size: 13px; font-family: var(--font-mono); letter-spacing: .12em; font-weight: 500; color: var(--accent); }
+.text .lead { font-size: 18px; font-weight: 600; line-height: 1.5; }
+.text p, .text li { font-size: 15px; }
+.text ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.text dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+.text dt { color: var(--muted); }
+.text dd { margin: 0; min-width: 0; }
+.year { font-family: var(--font-mono); font-weight: 500; font-size: 14px; }
+.history { display: grid; gap: 14px; }
+.history div { display: grid; gap: 4px; }
+
+.copy {
+  justify-self: start;
+  font: 500 12px var(--font-mono);
+  color: var(--muted); background: transparent;
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 12px; cursor: pointer;
+}
+.copy:hover { color: var(--ink); border-color: var(--muted); }
+.copy:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Eb7 오선 */
+.staff { width: 100%; max-width: 260px; justify-self: center; height: auto; }
+.staff line { stroke: var(--ink); stroke-width: 1; }
+.staff ellipse { fill: var(--ink); }
+.staff text { fill: var(--ink); }
+.staff .lbl { fill: var(--muted); font-family: var(--font-mono); font-size: 9px; }
+
+/* 멤버 */
+.member { display: grid; gap: 10px; }
+.member .photo { aspect-ratio: 3 / 2; }
+.member .who { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.member .who b { font-size: 17px; }
+.member .part { font-family: var(--font-mono); font-size: 12px; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 0 9px; }
+.member p { font-size: 14px; color: var(--muted); }
+
+/* 캘린더 */
+.cal { display: grid; gap: 8px; }
+.cal-head { display: flex; justify-content: space-between; align-items: baseline; }
+.cal-head b { font-size: 15px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; font-size: 13px; font-variant-numeric: tabular-nums; }
+.cal-grid .dow { color: var(--muted); font-size: 11px; padding-bottom: 4px; }
+.cal-grid .d { padding: 6px 0; border-radius: 8px; }
+.cal-grid .d.ev { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.event { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.event .when { font-family: var(--font-mono); font-size: 12px; color: var(--accent); grid-row: span 2; align-self: center; }
+
+/* 연락처 */
+.contact { display: grid; gap: 6px; font-size: 14px; }
+.contact div { display: flex; gap: 12px; }
+.contact span:first-child { color: var(--muted); width: 52px; flex: none; }
+
+.footer-note { text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--muted); padding: 14px 20px 18px; }
+
+/* 하단 메모 */
+.notes { display: grid; gap: 28px; }
+.notes section { display: grid; gap: 12px; }
+.notes h2 { font-size: 18px; font-weight: 700; }
+.serp { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 4px; max-width: 600px; }
+.serp .url { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+.serp .t { font-size: 17px; color: var(--accent); font-weight: 600; }
+.serp .d { font-size: 14px; color: var(--muted); }
+.serp .tags { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+.todo { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--muted); max-width: 62ch; }
+.todo b { color: var(--ink); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="memo">
+    <div class="eyebrow">LINKPIE PAGE DRAFT · v0.1 · 2026.11.06</div>
+    <h1>ebseven Linkpie 페이지 초안</h1>
+    <p>Linkpie 앱에 입력할 내용을 실제 블럭 순서대로 미리 배치한 화면입니다. 블럭 위의 작은 글씨가 Linkpie에서 고를 블럭 이름이고, 텍스트 블럭은 복사 버튼으로 문구를 그대로 가져갈 수 있습니다.</p>
+    <div class="legend">
+      <span><span class="ph">노란 칸</span> 실제 정보로 바꿀 자리</span>
+      <span><span class="tag">블럭 이름</span></span>
+    </div>
+  </header>
+
+  <main class="phone" aria-label="Linkpie 프로필 미리보기">
+
+    <!-- 0. 프로필 -->
+    <section class="block profile">
+      <div class="tag profile-tag" style="padding-top:14px">프로필 설정 (배경 20:9, 프로필 1:1)</div>
+      <div class="media cover">배경 이미지 · 무대 전경 또는 6인 단체 사진</div>
+      <div class="info">
+        <div class="avatar" aria-hidden="true">E♭7</div>
+        <div class="name">ebseven</div>
+        <p class="bio">아티스트와 지역, 음악을 잇는 세션팀<br>지역축제 · 문화행사 · 버스킹 · 라이브 공연</p>
+      </div>
+    </section>
+
+    <!-- 1. 링크 모음 -->
+    <section class="block">
+      <div class="tag">링크 모음 블럭</div>
+      <div class="socials">
+        <div class="social"><i>YT</i>YouTube</div>
+        <div class="social"><i>IG</i>Instagram</div>
+        <div class="social"><i>@</i>Mail</div>
+      </div>
+      <p class="caption" style="text-align:center">주소: <span class="ph">youtube.com/@ 채널</span> <span class="ph">instagram.com/ 계정</span></p>
+    </section>
+
+    <!-- 2. 대표 영상 -->
+    <section class="block">
+      <div class="tag">동영상 블럭</div>
+      <div class="media video"><span class="caption">대표 라이브 영상 <span class="ph">유튜브 주소</span></span></div>
+      <p class="caption">팀 전체 합이 잘 드러나는 1~3분짜리 축제 무대 영상이 첫 화면에 좋습니다.</p>
+    </section>
+
+    <!-- 3. 섭외 버튼 (상단) -->
+    <section class="block">
+      <div class="tag">링크 블럭 <span class="opt">구글 폼 연결</span></div>
+      <a class="btn" href="#booking">공연 섭외 문의하기<small>행사 날짜와 장소를 남겨 주세요</small></a>
+    </section>
+
+    <!-- 4. Eb7 이미지 (선택) -->
+    <section class="block">
+      <div class="tag">이미지 블럭 <span class="opt">선택</span></div>
+      <svg class="staff" viewBox="0 0 140 76" role="img" aria-label="오선 위에 쌓인 Eb7 화음: Eb, G, Bb, Db">
+        <line x1="6" y1="12" x2="134" y2="12"/>
+        <line x1="6" y1="22" x2="134" y2="22"/>
+        <line x1="6" y1="32" x2="134" y2="32"/>
+        <line x1="6" y1="42" x2="134" y2="42"/>
+        <line x1="6" y1="52" x2="134" y2="52"/>
+        <text x="58" y="27" font-size="15">♭</text>
+        <text x="47" y="37" font-size="15">♭</text>
+        <text x="58" y="57" font-size="15">♭</text>
+        <ellipse cx="78" cy="22" rx="5.6" ry="4" transform="rotate(-20 78 22)"/>
+        <ellipse cx="78" cy="32" rx="5.6" ry="4" transform="rotate(-20 78 32)"/>
+        <ellipse cx="78" cy="42" rx="5.6" ry="4" transform="rotate(-20 78 42)"/>
+        <ellipse cx="78" cy="52" rx="5.6" ry="4" transform="rotate(-20 78 52)"/>
+        <text class="lbl" x="70" y="72" text-anchor="middle">E♭7 = E♭ · G · B♭ · D♭</text>
+      </svg>
+      <p class="caption">Eb7의 네 음은 오선의 아래 네 줄에 하나씩 정확히 쌓입니다. 팀명 설명 옆에 이미지로 넣으면 의미가 바로 전달됩니다.</p>
+    </section>
+
+    <!-- 5. 팀 소개 -->
+    <section class="block">
+      <div class="tag">텍스트 블럭 · 팀 소개</div>
+      <div class="text" id="t-about">
+        <h2>ABOUT</h2>
+        <p class="lead">음악을 전공한 연주자 여섯 명의 세션팀, ebseven입니다.</p>
+        <p>보컬 아티스트와 협업해 다양한 무대와 음악 콘텐츠를 만들고, 지역축제와 문화행사, 버스킹, 라이브 카페 등 여러 공연 현장에서 연주합니다.</p>
+        <p>팀 이름은 코드 Eb7(E플랫 세븐)에서 가져왔습니다. 여러 음이 겹쳐 하나의 화음이 되듯, 다양한 아티스트와 함께 조화를 만들어 가겠다는 뜻을 담았습니다.</p>
+        <p>아티스트와 지역, 그리고 음악을 잇는 팀이 되고자 합니다.</p>
+      </div>
+      <button class="copy" type="button" data-copy="t-about">문구 복사</button>
+    </section>
+
+    <!-- 6. 멤버 -->
+    <section class="block">
+      <div class="tag">텍스트 블럭 · 소제목</div>
+      <div class="text"><h2>MEMBERS</h2></div>
+    </section>
+  </main>
+</div>
+
+<template id="member-tpl">
+  <section class="block">
+    <div class="tag">이미지 블럭 + 텍스트 블럭 · 멤버 <span class="n"></span></div>
+    <div class="media photo">멤버 사진 · 6장 모두 같은 비율과 톤</div>
+    <div class="member text">
+      <div class="who"><b><span class="ph">이름</span></b><span class="part">파트</span></div>
+      <p><span class="ph">한 줄 소개</span> · <span class="ph">전공 / 주요 경력</span></p>
+      <p>Instagram <span class="ph">@아이디</span></p>
+    </div>
+  </section>
+</template>
+
+<template id="rest-tpl">
+    <!-- 7. 이력 -->
+    <section class="block">
+      <div class="tag">텍스트 블럭 · 대표 이력</div>
+      <div class="text" id="t-history">
+        <h2>HISTORY</h2>
+        <div class="history">
+          <div>
+            <span class="year">2026</span>
+            <ul>
+              <li><span class="ph">행사명</span> 초청 공연 (<span class="ph">지역</span>)</li>
+              <li><span class="ph">아티스트명</span> 세션 참여</li>
+            </ul>
+          </div>
+          <div>
+            <span class="year">2025</span>
+            <ul>
+              <li><span class="ph">행사명</span> (<span class="ph">지역</span>)</li>
+              <li><span class="ph">라이브 카페명</span> 정기 공연</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <button class="copy" type="button" data-copy="t-history">문구 복사</button>
+    </section>
+
+    <!-- 8. 캘린더 -->
+    <section class="block">
+      <div class="tag">캘린더 블럭 <span class="opt">데이터탭에서 일정 입력</span></div>
+      <div class="cal">
+        <div class="cal-head"><b>2026년 12월</b><span class="caption">예시 일정</span></div>
+        <div class="cal-grid" id="cal"></div>
+        <div class="event">
+          <span class="when">12.12 SAT</span>
+          <b><span class="ph">공연명</span></b>
+          <span class="caption"><span class="ph">장소</span> · <span class="ph">시간</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 추가 영상 -->
+    <section class="block">
+      <div class="tag">동영상 블럭 x 2</div>
+      <div class="media video"><span class="caption">보컬 아티스트 협업 영상 <span class="ph">유튜브 주소</span></span></div>
+      <div class="media video"><span class="caption">소편성 · 라이브 카페 영상 <span class="ph">유튜브 주소</span></span></div>
+      <p class="caption">첫 영상과 분위기가 다른 무대를 고르면 공연 폭이 넓어 보입니다.</p>
+    </section>
+
+    <!-- 10. 섭외 안내 -->
+    <section class="block" id="booking">
+      <div class="tag">텍스트 블럭 · 공연 형태 안내</div>
+      <div class="text" id="t-booking">
+        <h2>BOOKING</h2>
+        <dl>
+          <dt>풀밴드</dt><dd>6인 · 지역축제, 야외무대, 기업 행사</dd>
+          <dt>소편성</dt><dd>2~4인 · 라이브 카페, 소규모 행사, 버스킹</dd>
+          <dt>협업</dt><dd>보컬 아티스트 동반 공연 가능</dd>
+          <dt>공연 시간</dt><dd>30분 ~ 90분 (협의)</dd>
+          <dt>음향 장비</dt><dd><span class="ph">지참 가능 / 현장 장비 사용</span></dd>
+          <dt>활동 지역</dt><dd><span class="ph">기본 지역</span>, 그 외 지역 협의</dd>
+        </dl>
+        <p>아래 버튼으로 행사 정보를 남겨 주시면 확인 후 연락드리겠습니다.</p>
+      </div>
+      <button class="copy" type="button" data-copy="t-booking">문구 복사</button>
+    </section>
+
+    <!-- 11. 섭외 버튼 -->
+    <section class="block">
+      <div class="tag">링크 블럭 <span class="opt">구글 폼 연결</span></div>
+      <a class="btn" href="#booking">공연 섭외 문의하기<small>행사명 · 날짜 · 장소 · 희망 공연 형태</small></a>
+    </section>
+
+    <!-- 12. 연락처 -->
+    <section class="block">
+      <div class="tag">연락처 블럭</div>
+      <div class="contact">
+        <div><span>메일</span><span class="ph">대표 메일 주소</span></div>
+        <div><span>연락처</span><span class="ph">대표 연락처</span></div>
+      </div>
+    </section>
+
+    <!-- 13. 방명록 -->
+    <section class="block">
+      <div class="tag">방명록 블럭 <span class="opt">선택</span></div>
+      <p class="caption">공연을 본 관객이 응원 메시지를 남기는 곳입니다. 메시지가 쌓이면 섭외 담당자에게도 좋은 신호가 됩니다.</p>
+    </section>
+
+</template>
+
+<div class="wrap" style="margin-top:40px">
+  <div class="notes">
+    <section>
+      <h2>검색 결과 미리보기 (SEO탭)</h2>
+      <div class="serp">
+        <span class="url">lnkpie.com/@<span class="ph">ebseven</span></span>
+        <span class="t">ebseven 세션팀 | 지역축제 · 문화행사 공연</span>
+        <span class="d">음악을 전공한 연주자 6인의 세션팀 ebseven. 보컬 아티스트와 협업해 지역축제, 문화행사, 버스킹, 라이브 카페 무대를 만듭니다. 공연 섭외 문의 환영.</span>
+        <span class="tags">태그: 세션팀, 밴드, 축제공연, 행사섭외, 버스킹, 라이브공연, <span class="ph">활동 지역</span></span>
+      </div>
+      <p class="caption">썸네일에는 6인 단체 공연 사진을 씁니다. 카카오톡이나 인스타그램으로 링크를 보낼 때 이 사진이 함께 뜹니다.</p>
+    </section>
+    <section>
+      <h2>채워야 할 정보</h2>
+      <ol class="todo">
+        <li><b>멤버 6명</b>의 이름, 악기 파트, 한 줄 소개, 인스타그램</li>
+        <li><b>대표 이력</b> 목록 (연도, 행사명, 지역)</li>
+        <li><b>유튜브·인스타그램</b> 주소, 대표 영상 주소 1~3개</li>
+        <li><b>대표 메일과 연락처</b>, 음향 장비 지참 여부, 기본 활동 지역</li>
+        <li><b>사진</b>: 배경 1장(20:9), 프로필 1장(1:1), 멤버 6장(같은 비율). 장당 10MB 이하</li>
+        <li><b>구글 폼</b> 주소 (섭외 문의 양식)</li>
+      </ol>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  var phone = document.querySelector('.phone');
+  var tpl = document.getElementById('member-tpl');
+  for (var i = 1; i <= 6; i++) {
+    var node = tpl.content.cloneNode(true);
+    node.querySelector('.n').textContent = i + ' / 6';
+    phone.appendChild(node);
+  }
+  phone.appendChild(document.getElementById('rest-tpl').content.cloneNode(true));
+
+  // 2026년 12월 1일은 화요일
+  var cal = document.getElementById('cal');
+  var dows = ['일', '월', '화', '수', '목', '금', '토'];
+  var html = dows.map(function (d) { return '<span class="dow">' + d + '</span>'; }).join('');
+  for (var b = 0; b < 2; b++) html += '<span></span>';
+  for (var d = 1; d <= 31; d++) {
+    html += '<span class="d' + (d === 12 ? ' ev' : '') + '">' + d + '</span>';
+  }
+  cal.innerHTML = html;
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.copy');
+    if (!btn) return;
+    var el = document.getElementById(btn.getAttribute('data-copy'));
+    var text = el.innerText.replace(/\n{3,}/g, '\n\n').trim();
+    var done = function () {
+      btn.textContent = '복사됨';
+      setTimeout(function () { btn.textContent = '문구 복사'; }, 1600);
+    };
+    var fallback = function () {
+      var r = document.createRange();
+      r.selectNodeContents(el);
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+      btn.textContent = '선택됨, 직접 복사하세요';
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } catch (err) { fallback(); }
+  });
+})();
+</script>
