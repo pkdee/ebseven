@@ -1,0 +1,359 @@
+---
+import { gallery } from '../data/site';
+
+const events = gallery.filter((e) => e.photos.length > 0);
+const dot = (d: string) => d.replaceAll('-', '.');
+const full = (date: string, file: string) => `/images/gallery/${date}/${file}`;
+const small = (date: string, file: string) => full(date, file).replace(/\.jpg$/, '-s.jpg');
+// 목록용 사진은 긴 변이 720px 이다
+const thumbSize = (w: number, h: number) => {
+  const k = Math.min(1, 720 / Math.max(w, h));
+  return { width: Math.round(w * k), height: Math.round(h * k) };
+};
+---
+
+{
+  events.length > 0 && (
+    <section class="section" id="photos">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Photos</p>
+          <h2 class="section-title">공연 사진</h2>
+          <p class="section-desc">무대 위의 이플랫세븐을 공연별로 모았습니다.</p>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="공연 고르기">
+          {events.map((e, i) => (
+            <button
+              class="tab"
+              type="button"
+              role="tab"
+              id={`photos-tab-${e.date}`}
+              aria-controls={`photos-panel-${e.date}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+            >
+              <span class="tab-date">{dot(e.date)}</span>
+              <span class="tab-title">{e.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {events.map((e, i) => (
+          <div
+            class="panel"
+            role="tabpanel"
+            id={`photos-panel-${e.date}`}
+            aria-labelledby={`photos-tab-${e.date}`}
+            data-title={`${dot(e.date)} ${e.title}`}
+            hidden={i !== 0}
+          >
+            <ul class="grid">
+              {e.photos.map((p, j) => {
+                const t = thumbSize(p.width, p.height);
+                return (
+                  <li>
+                    <a class="thumb" href={full(e.date, p.file)} aria-label={`${p.alt} 크게 보기`}>
+                      <img
+                        src={small(e.date, p.file)}
+                        alt={p.alt}
+                        width={t.width}
+                        height={t.height}
+                        loading={i === 0 && j < 3 ? 'eager' : 'lazy'}
+                        decoding="async"
+                      />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      {/* 크게 보기: 고른 공연 안에서 한 장씩 넘겨 본다 */}
+      <dialog class="viewer" data-photo-viewer aria-label="공연 사진 크게 보기">
+        <div class="viewer-body">
+          <button class="v-close" type="button" data-close aria-label="닫기">
+            <span aria-hidden="true">×</span>
+          </button>
+          <button class="v-nav v-prev" type="button" data-v-prev aria-label="이전 사진">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <figure class="v-figure">
+            <img data-v-img src="" alt="" />
+            <figcaption>
+              <span data-v-title></span>
+              <span data-v-count></span>
+            </figcaption>
+          </figure>
+          <button class="v-nav v-next" type="button" data-v-next aria-label="다음 사진">
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
+      </dialog>
+    </section>
+  )
+}
+
+<script>
+  const root = document.querySelector<HTMLElement>('#photos');
+  if (root) {
+    // 공연 탭
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const select = (tab: HTMLButtonElement) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+      });
+      tab.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!step) return;
+        e.preventDefault();
+        const next = tabs[(i + step + tabs.length) % tabs.length];
+        select(next);
+        next.focus();
+      });
+    });
+
+    // 크게 보기
+    const viewer = root.querySelector<HTMLDialogElement>('[data-photo-viewer]')!;
+    const img = viewer.querySelector<HTMLImageElement>('[data-v-img]')!;
+    const title = viewer.querySelector<HTMLElement>('[data-v-title]')!;
+    const count = viewer.querySelector<HTMLElement>('[data-v-count]')!;
+    let list: HTMLAnchorElement[] = [];
+    let index = 0;
+
+    const show = (i: number) => {
+      index = (i + list.length) % list.length;
+      const a = list[index];
+      img.src = a.href;
+      img.alt = a.querySelector('img')!.alt;
+      count.textContent = `${index + 1} / ${list.length}`;
+      // 다음 사진을 미리 받아 둔다
+      const after = list[(index + 1) % list.length];
+      if (after) new Image().src = after.href;
+    };
+
+    root.querySelectorAll<HTMLElement>('.panel').forEach((panel) => {
+      const thumbs = Array.from(panel.querySelectorAll<HTMLAnchorElement>('.thumb'));
+      thumbs.forEach((a, i) =>
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          list = thumbs;
+          title.textContent = panel.dataset.title ?? '';
+          show(i);
+          viewer.showModal();
+        })
+      );
+    });
+    viewer.querySelector('[data-v-prev]')!.addEventListener('click', () => show(index - 1));
+    viewer.querySelector('[data-v-next]')!.addEventListener('click', () => show(index + 1));
+    viewer.querySelector('[data-close]')!.addEventListener('click', () => viewer.close());
+    // 사진 바깥 어두운 곳을 누르면 닫는다
+    viewer.addEventListener('click', (e) => {
+      if (e.target === viewer || (e.target as HTMLElement).classList.contains('viewer-body')) viewer.close();
+    });
+    viewer.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+    // 손가락으로 옆으로 밀어도 넘어간다
+    let startX = 0;
+    viewer.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    viewer.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+    });
+  }
+</script>
+
+<style>
+  /* 공연 탭. 휴대폰에서는 옆으로 밀어서 고른다 */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: clamp(20px, 3vw, 28px);
+    padding: 2px 6px 6px 2px;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    flex: none;
+    display: grid;
+    gap: 2px;
+    text-align: left;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  .tab:hover {
+    border-color: var(--brand-shadow);
+  }
+  .tab[aria-selected='true'] {
+    background: var(--brand-yellow);
+    border-color: var(--brand-shadow);
+    box-shadow: 3px 3px 0 var(--brand-shadow);
+  }
+  .tab-date {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+  .tab[aria-selected='true'] .tab-date {
+    color: var(--brand-shadow);
+  }
+  .tab-title {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* 사진 비율을 살린 벽돌 쌓기 배치 */
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 3;
+    column-gap: clamp(10px, 1.6vw, 16px);
+  }
+  .grid li {
+    break-inside: avoid;
+    margin-bottom: clamp(10px, 1.6vw, 16px);
+  }
+  .thumb {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+    cursor: zoom-in;
+  }
+  .thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+  .thumb:hover img {
+    transform: scale(1.03);
+  }
+
+  /* 크게 보기 (팬아트와 같은 모양) */
+  .viewer {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+  }
+  .viewer::backdrop {
+    background: rgba(1, 11, 9, 0.9);
+  }
+  .viewer-body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+      calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  }
+  .v-figure {
+    margin: 0;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    justify-items: center;
+    gap: 12px;
+  }
+  .v-figure img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    align-self: center;
+  }
+  .v-figure figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 16px;
+    font-size: var(--step--1);
+    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-mono);
+    text-align: center;
+  }
+  .v-nav,
+  .v-close {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .v-nav:hover,
+  .v-close:hover {
+    background: var(--brand-yellow);
+    color: var(--brand-shadow);
+    border-color: var(--brand-yellow);
+  }
+  .v-nav span {
+    margin-top: -3px;
+  }
+  .v-close {
+    position: absolute;
+    top: calc(8px + env(safe-area-inset-top, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+  }
+
+  @media (max-width: 640px) {
+    .grid {
+      columns: 2;
+    }
+  }
+  @media (max-width: 560px) {
+    .viewer-body {
+      grid-template-columns: 1fr;
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+    .v-nav {
+      position: absolute;
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      z-index: 1;
+    }
+    .v-prev {
+      left: max(16px, env(safe-area-inset-left, 0px));
+    }
+    .v-next {
+      right: max(16px, env(safe-area-inset-right, 0px));
+    }
+  }
+</style>

@@ -16,6 +16,7 @@
 | 공연 영상 | `videos` (유튜브 주소 `youtu.be/XXXX` 의 `XXXX` 부분) |
 | 섭외 안내 (함께 만드는 무대, 활동 지역) | `booking` |
 | 새 앨범 (제목, 발매 시각, 커버, 음원) | `album` |
+| 공연 사진 (공연별 탭, 사진은 `public/images/gallery/날짜/`) | `gallery` |
 | 팬아트 | `fanart` |
 | 검색 결과에 나오는 제목과 설명 | `site.title`, `site.description` |
 
@@ -66,7 +67,7 @@ Cloudflare Pages 를 기준으로 합니다. GitHub 저장소에 올린 뒤 Clou
 src/
   data/site.ts        사이트 내용 전부
   pages/index.astro   섹션 순서
-  components/         섹션별 화면 (Hero, Album, About, Members, History, Videos, Fanart, Booking ...)
+  components/         섹션별 화면 (Hero, Album, About, Members, History, Gallery, Videos, Fanart, Booking ...)
   scripts/slider.ts   첫 화면 사진, 영상, 팬아트 슬라이드
   styles/global.css   색, 글꼴, 공통 스타일
 public/               사진, 파비콘
@@ -75,6 +76,7 @@ public/               사진, 파비콘
   images/og.png              링크 공유 미리보기 이미지 (1200x630)
   images/team-*.jpg          첫 화면 단체 사진 슬라이드 (1200x1200)
   images/member-*.jpg        멤버 사진
+  images/gallery/날짜/       공연 사진 (01.jpg 크게 보기용, 01-s.jpg 목록용)
 linkpie-plan.md       Linkpie 프로필 구성안 (참고용)
 linkpie-draft.html    Linkpie 프로필 초안 화면 (참고용)
 ```

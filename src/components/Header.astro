@@ -1,11 +1,12 @@
 ---
-import { shows } from '../data/site';
+import { shows, gallery } from '../data/site';
 
 const nav = [
   { href: '#album', label: '앨범' },
   { href: '#about', label: '소개' },
   { href: '#members', label: '멤버' },
   { href: '#history', label: '이력' },
+  ...(gallery.length ? [{ href: '#photos', label: '사진' }] : []),
   { href: '#videos', label: '영상' },
   { href: '#fanart', label: '팬아트' },
   // 등록된 공연이 없으면 일정 섹션이 숨겨지므로 메뉴에서도 뺀다.

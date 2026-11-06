@@ -120,6 +120,77 @@ export const history: HistoryItem[] = [
   { date: '2025-10-18', title: '아날로그 스토어 원동락공소', host: '대전 동구동락' },
 ];
 
+/**
+ * 공연 사진. 공연마다 탭 하나로 묶이고, 목록 순서대로 탭이 놓인다.
+ * 사진은 public/images/gallery/날짜/ 아래에 두 벌씩 둔다.
+ *   01.jpg   크게 보기용 (긴 변 1600px)
+ *   01-s.jpg 목록용 작은 사진 (긴 변 720px)
+ * width, height 는 큰 사진 기준.
+ */
+export type GalleryEvent = {
+  /** YYYY-MM-DD. 사진 폴더 이름으로도 쓴다 */
+  date: string;
+  title: string;
+  photos: { file: string; width: number; height: number; alt: string }[];
+};
+
+export const gallery: GalleryEvent[] = [
+  {
+    date: '2026-10-24',
+    title: '프리비전스 돗자리 페스티벌',
+    photos: [
+      { file: '01.jpg', width: 1600, height: 1066, alt: '엄지를 들고 웃는 다섯 멤버' },
+      { file: '02.jpg', width: 1600, height: 1066, alt: '돌벽으로 된 공연장에서 연주하는 밴드 전체 모습' },
+      { file: '03.jpg', width: 1600, height: 1066, alt: '헤드폰을 끼고 건반을 연주하는 모습' },
+      { file: '04.jpg', width: 1066, height: 1600, alt: '돌벽 조명 아래에서 베이스를 연주하는 모습' },
+      { file: '05.jpg', width: 1600, height: 1066, alt: '파란 기타를 들고 연주하는 모습' },
+      { file: '06.jpg', width: 1600, height: 1066, alt: '헤드폰을 끼고 드럼을 연주하는 모습' },
+      { file: '07.jpg', width: 1600, height: 1066, alt: '돌벽 앞 드럼 세트에서 연주하는 모습' },
+      { file: '08.jpg', width: 1600, height: 1066, alt: '건반을 연주하며 고개를 숙인 모습' },
+      { file: '09.jpg', width: 1600, height: 1066, alt: '건반을 연주하는 옆모습' },
+    ],
+  },
+  {
+    date: '2026-10-10',
+    title: '대전 서구아트페스티벌 밴드경연대회',
+    photos: [
+      { file: '01.jpg', width: 1200, height: 1600, alt: '대상 상금판을 들고 축제장 앞에서 찍은 단체 사진' },
+      { file: '02.jpg', width: 1600, height: 1066, alt: '무대 위에서 대상을 받는 모습' },
+      { file: '03.jpg', width: 1600, height: 1066, alt: '서구아트페스티벌 무대에서 공연하는 밴드 전체 모습' },
+      { file: '04.jpg', width: 1600, height: 1066, alt: '보컬과 기타 연주자들이 함께 선 무대' },
+      { file: '05.jpg', width: 1066, height: 1600, alt: '보컬이 노래하고 옆에서 베이스를 연주하는 모습' },
+      { file: '06.jpg', width: 1280, height: 1600, alt: '일렉 기타를 연주하는 모습' },
+      { file: '07.jpg', width: 1280, height: 1600, alt: '베이스를 연주하는 모습' },
+      { file: '08.jpg', width: 1600, height: 1066, alt: '건반 두 대에서 함께 연주하는 모습' },
+      { file: '09.jpg', width: 1254, height: 1568, alt: '초록 모자를 쓰고 건반을 연주하는 모습' },
+    ],
+  },
+  {
+    date: '2026-09-12',
+    title: '옐로우 스프링스 가을음악회',
+    photos: [
+      { file: '01.jpg', width: 1600, height: 1066, alt: '옐로우 스프링스 가을음악회 현수막 앞 무대 전체' },
+      { file: '02.jpg', width: 1600, height: 1066, alt: '보컬이 노래하고 기타와 드럼이 연주하는 모습' },
+      { file: '03.jpg', width: 1600, height: 1066, alt: '건반 앞에서 웃는 모습' },
+      { file: '04.jpg', width: 1600, height: 1066, alt: '야외 무대에서 건반을 연주하는 모습' },
+      { file: '05.jpg', width: 1066, height: 1600, alt: '기타를 연주하는 모습' },
+      { file: '06.jpg', width: 1066, height: 1600, alt: '드럼을 연주하는 모습' },
+      { file: '07.jpg', width: 1600, height: 1066, alt: '무대 뒤에서 바라본 관객석' },
+    ],
+  },
+  {
+    date: '2026-08-29',
+    title: '이플랫세븐 제1회 정기공연',
+    photos: [
+      { file: '01.jpg', width: 640, height: 960, alt: '양손 엄지를 들고 노래하는 보컬' },
+      { file: '02.jpg', width: 1067, height: 1600, alt: '별빛 화면 앞에서 일렉 기타를 연주하는 모습' },
+      { file: '03.jpg', width: 1067, height: 1600, alt: '베이스를 연주하는 모습' },
+      { file: '04.jpg', width: 1600, height: 1067, alt: '헤드폰을 끼고 드럼을 연주하는 모습' },
+      { file: '05.jpg', width: 1067, height: 1600, alt: '관객 너머로 보이는 건반 연주' },
+    ],
+  },
+];
+
 /** 공연 일정. 날짜가 지난 공연은 자동으로 "지난 공연"으로 옮겨진다. */
 export const shows: Show[] = [
   // { date: '2026-12-12', title: '○○ 겨울 축제', place: '○○ 광장', time: '19:00' },
