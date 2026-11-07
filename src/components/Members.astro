@@ -58,11 +58,6 @@ const heading = '하나의 음악을 만드는 밴드';
                 </h3>
                 {m.intro && <p class="intro">{m.intro}</p>}
                 {m.career && <p class="career">{m.career}</p>}
-                {m.instagram && (
-                  <a class="ig" href={igUrl(m.instagram)} target="_blank" rel="noopener">
-                    @{m.instagram}
-                  </a>
-                )}
               </div>
             </li>
           );
@@ -211,13 +206,6 @@ const heading = '하나의 음악을 만드는 밴드';
   .career {
     color: var(--muted);
     font-size: 0.9rem;
-  }
-  .ig {
-    justify-self: start;
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--muted);
-    text-underline-offset: 3px;
   }
   @media (max-width: 1000px) {
     .grid {
