@@ -8,7 +8,7 @@ import { popup } from '../data/site';
 
 {
   popup && (
-    <dialog class="notice" data-notice={popup.id} aria-label="새 소식">
+    <dialog class="notice" data-notice={popup.id} aria-label="새 소식" tabindex="-1">
       <div class="card">
         <a class="art" href={popup.href} data-notice-go>
           <img src={popup.image} alt={popup.alt} width="1000" height="1000" decoding="async" />
@@ -26,7 +26,7 @@ import { popup } from '../data/site';
           <button type="button" class="never" data-notice-never>
             다시 보지 않기
           </button>
-          <button type="button" class="close" data-notice-close autofocus>
+          <button type="button" class="close" data-notice-close>
             닫기
           </button>
         </div>
@@ -38,54 +38,50 @@ import { popup } from '../data/site';
 <script>
   const dialog = document.querySelector<HTMLDialogElement>('dialog[data-notice]');
   if (dialog) {
-    const id = dialog.dataset.notice!;
-    const neverKey = `ebseven-notice-never:${id}`;
-    const closedKey = `ebseven-notice-closed:${id}`;
+    // "다시 보지 않기"를 누른 기록만 남긴다. "닫기"는 아무것도 남기지 않아 다음에 들어오면 다시 뜬다.
+    const neverKey = `ebseven-notice-never:${dialog.dataset.notice}`;
     // 사생활 보호 모드 등에서는 저장소가 막혀 있을 수 있다. 그때는 그냥 매번 보여 준다.
-    const read = (store: () => Storage, key: string) => {
-      try {
-        return store().getItem(key) === '1';
-      } catch {
-        return false;
-      }
+    let never = false;
+    try {
+      never = window.localStorage.getItem(neverKey) === '1';
+    } catch {
+      /* 읽지 못하면 보여 준다 */
+    }
+
+    if (!never) {
+      // 첫 화면이 그려진 뒤 살짝 늦게 띄운다.
+      // 브라우저는 창을 열면 안쪽 첫 버튼이나 링크에 포커스를 줘 테두리가 생길 수 있다.
+      // 창 자체로 포커스를 옮겨 아무것도 선택된 것처럼 보이지 않게 한다. Tab 을 누르면 커버부터 차례로 이동한다.
+      window.setTimeout(() => {
+        dialog.showModal();
+        dialog.focus();
+      }, 400);
+    }
+
+    const close = () => {
+      if (dialog.open) dialog.close();
     };
-    const write = (store: () => Storage, key: string) => {
+    dialog.querySelector('[data-notice-never]')!.addEventListener('click', () => {
       try {
-        store().setItem(key, '1');
+        window.localStorage.setItem(neverKey, '1');
       } catch {
         /* 저장하지 못해도 창은 닫힌다 */
       }
-    };
-    const local = () => window.localStorage;
-    const session = () => window.sessionStorage;
-
-    if (!read(local, neverKey) && !read(session, closedKey)) {
-      // 첫 화면이 그려진 뒤 살짝 늦게 띄운다
-      window.setTimeout(() => dialog.showModal(), 400);
-    }
-
-    // "닫기": 이 창(탭)에서는 다시 띄우지 않는다. "다시 보지 않기": 이 기기에서 다시 띄우지 않는다.
-    const hide = (forever = false) => {
-      write(session, closedKey);
-      if (forever) write(local, neverKey);
-      if (dialog.open) dialog.close();
-    };
-    dialog.querySelector('[data-notice-never]')!.addEventListener('click', () => hide(true));
-    dialog.querySelector('[data-notice-close]')!.addEventListener('click', () => hide());
-    // 바깥 어두운 곳을 누르면 "닫기"와 같다
-    dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) hide();
+      close();
     });
-    // Esc 로 닫아도 "닫기"와 같다
-    dialog.addEventListener('cancel', () => write(session, closedKey));
-    dialog.addEventListener('close', () => write(session, closedKey));
+    dialog.querySelector('[data-notice-close]')!.addEventListener('click', close);
+    // 바깥 어두운 곳을 누르면 닫는다 (Esc 는 브라우저가 알아서 닫는다)
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
     // 커버를 누르면 창을 닫고 앨범 소개로 이동한다
-    dialog.querySelector('[data-notice-go]')!.addEventListener('click', () => hide());
+    dialog.querySelector('[data-notice-go]')!.addEventListener('click', close);
   }
 </script>
 
 <style>
   .notice {
+    outline: none;
     padding: 0;
     border: 0;
     background: transparent;
