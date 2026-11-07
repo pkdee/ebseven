@@ -52,14 +52,21 @@ npm run build
 
 ## 배포
 
-Cloudflare Pages 를 기준으로 합니다. GitHub 저장소에 올린 뒤 Cloudflare Pages 에서 저장소를 연결하고 아래처럼 설정합니다.
+Vercel 에 GitHub 저장소가 연결되어 있어, `main` 에 푸시하면 https://ebseven.vercel.app 에 자동으로 배포됩니다.
 
 | 항목 | 값 |
 |---|---|
 | Build command | `npm run build` |
 | Build output directory | `dist` |
 
-배포 주소나 도메인이 정해지면 [astro.config.mjs](astro.config.mjs) 의 `site` 값을 바꿉니다. 검색엔진과 링크 미리보기에 쓰이는 주소입니다.
+도메인을 따로 연결하면 [astro.config.mjs](astro.config.mjs) 의 `site` 값을 그 주소로 바꿉니다. 대표 주소(canonical), 링크 미리보기, `robots.txt`, `sitemap.xml` 이 모두 이 값으로 만들어집니다.
+
+## 검색 노출
+
+- 검색 결과 제목과 설명은 [src/data/site.ts](src/data/site.ts) 의 `site.title`, `site.description` 입니다.
+- `robots.txt` 와 `sitemap.xml` 은 [src/pages](src/pages) 에서 빌드할 때 만들어집니다.
+- 팀, 멤버, 앨범 정보는 구조화 데이터로 [src/layouts/Base.astro](src/layouts/Base.astro) 에 들어갑니다.
+- Google Search Console, 네이버 서치어드바이저에 사이트를 등록할 때 "HTML 태그" 방식을 고르고, 받은 코드를 `site.verification` 의 `google`, `naver` 에 적어 배포합니다. 확인이 끝나면 각 도구에서 `sitemap.xml` 을 제출합니다.
 
 ## 폴더 구성
 
