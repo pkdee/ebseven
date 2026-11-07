@@ -4,30 +4,19 @@ import { album, site } from '../data/site';
 
 <section class="section album-section" id="album">
   <div class="container grid">
-    <div class="player" data-player>
-      <button class="cover" type="button" data-toggle aria-label={`${album.title} 재생`}>
-        <img src={album.cover} alt={`${album.label} ${album.title}(${album.titleEn}) 커버`} width="1000" height="1000" loading="eager" />
-        <span class="state" aria-hidden="true">
-          <span class="icon-play"></span>
-          <span class="icon-pause"></span>
-        </span>
-      </button>
-      <audio src={album.audio} preload="none" data-audio></audio>
-      <div class="bar">
-        <span class="time" data-current>0:00</span>
-        <input
-          id="album-progress"
-          class="progress"
-          type="range"
-          min="0"
-          max="100"
-          step="0.1"
-          value="0"
-          aria-label="재생 위치"
-          data-progress
+    {/* 티저 쇼츠. 썸네일만 먼저 보여 주고, 누르면 그 자리에서 유튜브 플레이어를 불러온다 */}
+    <div class="player">
+      <button class="teaser" type="button" data-teaser={album.teaser.youtubeId} aria-label={`${album.teaser.title} 재생`}>
+        <img
+          src={`https://i.ytimg.com/vi/${album.teaser.youtubeId}/oar2.jpg`}
+          alt={`${album.label} ${album.title}(${album.titleEn}) 티저 영상`}
+          width="1080"
+          height="1920"
+          loading="lazy"
+          decoding="async"
         />
-        <span class="time" data-duration>-:--</span>
-      </div>
+        <span class="state" aria-hidden="true"><span class="icon-play"></span></span>
+      </button>
     </div>
 
     <div class="info">
@@ -52,70 +41,20 @@ import { album, site } from '../data/site';
           <li><b data-unit="s">--</b><span>초</span></li>
         </ol>
       </div>
-      <p class="hint">커버를 누르면 바로 들을 수 있습니다.</p>
+      <p class="hint">티저 영상을 눌러 피어나를 먼저 만나 보세요.</p>
     </div>
   </div>
 </section>
 
 <script>
-  const fmt = (s: number) => {
-    if (!isFinite(s)) return '-:--';
-    const m = Math.floor(s / 60);
-    return `${m}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-  };
-
-  document.querySelectorAll<HTMLElement>('[data-player]').forEach((player) => {
-    const audio = player.querySelector<HTMLAudioElement>('[data-audio]')!;
-    const toggle = player.querySelector<HTMLButtonElement>('[data-toggle]')!;
-    const progress = player.querySelector<HTMLInputElement>('[data-progress]')!;
-    const cur = player.querySelector<HTMLElement>('[data-current]')!;
-    const dur = player.querySelector<HTMLElement>('[data-duration]')!;
-    const title = toggle.getAttribute('aria-label')?.replace(/ 재생$/, '') ?? '';
-    let seeking = false;
-
-    const paint = () => {
-      const playing = !audio.paused;
-      player.toggleAttribute('data-playing', playing);
-      toggle.setAttribute('aria-label', `${title} ${playing ? '일시정지' : '재생'}`);
-    };
-
-    toggle.addEventListener('click', () => {
-      if (audio.paused) {
-        // 다른 오디오, 영상 재생기가 있으면 겹치지 않게 이 곡만 재생
-        document.querySelectorAll('audio').forEach((a) => a !== audio && a.pause());
-        audio.play().catch(() => paint());
-      } else {
-        audio.pause();
-      }
-    });
-    audio.addEventListener('play', paint);
-    audio.addEventListener('pause', paint);
-    audio.addEventListener('ended', () => {
-      audio.currentTime = 0;
-      paint();
-    });
-    audio.addEventListener('loadedmetadata', () => (dur.textContent = fmt(audio.duration)));
-    audio.addEventListener('timeupdate', () => {
-      cur.textContent = fmt(audio.currentTime);
-      if (!seeking && audio.duration) {
-        const pct = (audio.currentTime / audio.duration) * 100;
-        progress.value = String(pct);
-        progress.style.setProperty('--pct', `${pct}%`);
-      }
-    });
-    progress.addEventListener('input', () => {
-      seeking = true;
-      progress.style.setProperty('--pct', `${progress.value}%`);
-      if (audio.duration) cur.textContent = fmt((Number(progress.value) / 100) * audio.duration);
-    });
-    progress.addEventListener('change', () => {
-      seeking = false;
-      if (audio.duration) {
-        audio.currentTime = (Number(progress.value) / 100) * audio.duration;
-      } else {
-        // 아직 불러오기 전이면 먼저 재생을 시작한다
-        toggle.click();
-      }
+  document.querySelectorAll<HTMLButtonElement>('[data-teaser]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.teaser}?autoplay=1&rel=0&playsinline=1`;
+      iframe.title = btn.getAttribute('aria-label')?.replace(/ 재생$/, '') ?? '티저 영상';
+      iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      btn.replaceWith(iframe);
     });
   });
 
@@ -168,36 +107,39 @@ import { album, site } from '../data/site';
     align-items: center;
   }
 
+  /* 세로 영상이라 너무 길어지지 않게 폭을 줄인다 */
   .player {
-    display: grid;
-    gap: 16px;
     min-width: 0;
-    max-width: 520px;
     width: 100%;
+    max-width: 340px;
     justify-self: center;
+    padding-right: 10px;
   }
-  .cover {
-    position: relative;
+  .teaser,
+  .player :global(iframe) {
     display: block;
     width: 100%;
-    padding: 0;
+    aspect-ratio: 9 / 16;
     border: 0;
-    background: none;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-  .cover img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    border-radius: 6px;
+    border-radius: var(--radius);
+    background: var(--brand-shadow);
     box-shadow: 10px 10px 0 var(--brand-shadow);
+  }
+  .teaser {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
     transition: transform 0.3s ease;
   }
-  .cover:hover img {
+  .teaser:hover {
     transform: translate(-2px, -2px);
   }
-  /* 커버 가운데 글자를 가리지 않게 오른쪽 아래에 둔다 */
+  .teaser img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   .state {
     position: absolute;
     right: 18px;
@@ -209,80 +151,16 @@ import { album, site } from '../data/site';
     box-shadow: 3px 3px 0 var(--brand-shadow);
     display: grid;
     place-items: center;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: transform 0.2s ease;
+  }
+  .teaser:hover .state {
+    transform: scale(1.06);
   }
   .icon-play {
     margin-left: 6px;
     border-left: 24px solid var(--brand-shadow);
     border-top: 15px solid transparent;
     border-bottom: 15px solid transparent;
-  }
-  .icon-pause {
-    display: none;
-    width: 24px;
-    height: 28px;
-    border-left: 8px solid var(--brand-shadow);
-    border-right: 8px solid var(--brand-shadow);
-  }
-  [data-playing] .icon-play {
-    display: none;
-  }
-  [data-playing] .icon-pause {
-    display: block;
-  }
-  /* 재생 중에는 버튼을 숨기고, 커버에 마우스를 올리면 일시정지 버튼이 보인다 */
-  [data-playing] .state {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  [data-playing] .cover:hover .state,
-  [data-playing] .cover:focus-visible .state {
-    opacity: 1;
-    transform: none;
-  }
-
-  .bar {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 12px;
-    margin-top: 6px;
-  }
-  .time {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-    min-width: 2.8em;
-  }
-  .time:last-child {
-    text-align: right;
-  }
-  .progress {
-    --pct: 0%;
-    width: 100%;
-    height: 4px;
-    margin: 0;
-    appearance: none;
-    -webkit-appearance: none;
-    border-radius: 999px;
-    background: linear-gradient(to right, var(--accent) var(--pct), var(--line) var(--pct));
-    cursor: pointer;
-  }
-  .progress::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 2px solid var(--bg);
-  }
-  .progress::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 2px solid var(--bg);
   }
 
   .info {
@@ -395,8 +273,7 @@ import { album, site } from '../data/site';
       grid-template-columns: 1fr;
     }
     .player {
-      max-width: 440px;
-      padding-right: 10px;
+      max-width: 300px;
     }
   }
 </style>

@@ -230,8 +230,10 @@ export const album = {
   releaseAt: '2026-11-13T12:00:00+09:00',
   releaseText: '11월 13일(금) 12:00 발매',
   cover: '/images/album-blooming.jpg',
-  /** 원본: 찐찐찐찐 MASTER.wav 를 AAC로 변환 */
+  /** 원본: 찐찐찐찐 MASTER.wav 를 AAC로 변환. 지금은 화면에 쓰지 않고 티저 영상을 보여 준다. */
   audio: '/audio/blooming-track.m4a',
+  /** 앨범 자리에 보여 줄 티저 쇼츠. youtube.com/shorts/XXXX 의 XXXX */
+  teaser: { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1' },
 };
 
 /** 팬아트 */
