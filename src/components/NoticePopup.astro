@@ -1,0 +1,201 @@
+---
+/**
+ * 사이트에 들어오면 뜨는 알림창 (지금은 1집 앨범 커버).
+ * 내용은 src/data/site.ts 의 popup 에서 고친다.
+ */
+import { popup } from '../data/site';
+---
+
+{
+  popup && (
+    <dialog class="notice" data-notice={popup.id} aria-label="새 소식">
+      <div class="card">
+        <a class="art" href={popup.href} data-notice-go>
+          <img src={popup.image} alt={popup.alt} width="1000" height="1000" decoding="async" />
+        </a>
+        {popup.title && (
+          <div class="info">
+            {popup.label && <p class="label">{popup.label}</p>}
+            <p class="title">
+              {popup.title}
+              {popup.titleEn && <span>{popup.titleEn}</span>}
+            </p>
+          </div>
+        )}
+        <div class="actions">
+          <button type="button" class="never" data-notice-never>
+            다시 보지 않기
+          </button>
+          <button type="button" class="close" data-notice-close autofocus>
+            닫기
+          </button>
+        </div>
+      </div>
+    </dialog>
+  )
+}
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('dialog[data-notice]');
+  if (dialog) {
+    const id = dialog.dataset.notice!;
+    const neverKey = `ebseven-notice-never:${id}`;
+    const closedKey = `ebseven-notice-closed:${id}`;
+    // 사생활 보호 모드 등에서는 저장소가 막혀 있을 수 있다. 그때는 그냥 매번 보여 준다.
+    const read = (store: () => Storage, key: string) => {
+      try {
+        return store().getItem(key) === '1';
+      } catch {
+        return false;
+      }
+    };
+    const write = (store: () => Storage, key: string) => {
+      try {
+        store().setItem(key, '1');
+      } catch {
+        /* 저장하지 못해도 창은 닫힌다 */
+      }
+    };
+    const local = () => window.localStorage;
+    const session = () => window.sessionStorage;
+
+    if (!read(local, neverKey) && !read(session, closedKey)) {
+      // 첫 화면이 그려진 뒤 살짝 늦게 띄운다
+      window.setTimeout(() => dialog.showModal(), 400);
+    }
+
+    // "닫기": 이 창(탭)에서는 다시 띄우지 않는다. "다시 보지 않기": 이 기기에서 다시 띄우지 않는다.
+    const hide = (forever = false) => {
+      write(session, closedKey);
+      if (forever) write(local, neverKey);
+      if (dialog.open) dialog.close();
+    };
+    dialog.querySelector('[data-notice-never]')!.addEventListener('click', () => hide(true));
+    dialog.querySelector('[data-notice-close]')!.addEventListener('click', () => hide());
+    // 바깥 어두운 곳을 누르면 "닫기"와 같다
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) hide();
+    });
+    // Esc 로 닫아도 "닫기"와 같다
+    dialog.addEventListener('cancel', () => write(session, closedKey));
+    dialog.addEventListener('close', () => write(session, closedKey));
+    // 커버를 누르면 창을 닫고 앨범 소개로 이동한다
+    dialog.querySelector('[data-notice-go]')!.addEventListener('click', () => hide());
+  }
+</script>
+
+<style>
+  .notice {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - 32px);
+  }
+  .notice::backdrop {
+    background: rgba(1, 11, 9, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  .notice[open] .card {
+    animation: pop 0.28s cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+  .notice[open]::backdrop {
+    animation: fade 0.2s ease;
+  }
+  @keyframes pop {
+    from {
+      transform: translateY(12px) scale(0.94);
+      opacity: 0;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* 정사각형 커버 아래에 앨범 이름과 버튼 두 개가 붙은 카드.
+     화면이 낮으면 커버(카드 폭)가 줄어들어 버튼까지 한 화면에 들어온다 */
+  .card {
+    width: min(420px, calc(100vw - 32px), calc(100dvh - 32px - 150px));
+    overflow: hidden;
+    background: var(--bg);
+    border: 2px solid var(--brand-shadow);
+    border-radius: 18px;
+  }
+  .art {
+    display: block;
+  }
+  .art img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  .info {
+    display: grid;
+    gap: 2px;
+    padding: 14px 18px 16px;
+    border-top: 2px solid var(--brand-shadow);
+  }
+  .label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 10px;
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .title span {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 2px solid var(--brand-shadow);
+  }
+  .actions button {
+    min-height: 52px;
+    padding: 0 12px;
+    border: 0;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .actions .never {
+    background: var(--bg);
+    color: var(--muted);
+    border-right: 2px solid var(--brand-shadow);
+  }
+  .never:hover {
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .close {
+    background: var(--brand-yellow);
+    color: var(--brand-shadow);
+  }
+  .close:hover {
+    background: #ffd766;
+  }
+  .actions button:focus-visible {
+    outline: 3px solid var(--brand-teal);
+    outline-offset: -3px;
+  }
+</style>

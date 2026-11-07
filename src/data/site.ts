@@ -249,6 +249,30 @@ export const album = {
   teaser: { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1', thumb: '/images/album-teaser.jpg' },
 };
 
+/**
+ * 사이트에 들어오면 뜨는 알림창. null 로 두면 뜨지 않는다.
+ * "다시 보지 않기"를 누른 사람은 id 가 같은 동안 다시 보지 않는다. 새 소식으로 바꾸면 id 도 바꾼다.
+ * "닫기"는 지금 열어 둔 창(탭)에서만 다시 뜨지 않는다.
+ */
+export const popup: {
+  id: string;
+  image: string;
+  alt: string;
+  href: string;
+  /** 사진 아래 글자. 작은 설명, 큰 제목, 제목 옆 영문 순서로 보인다 */
+  label?: string;
+  title?: string;
+  titleEn?: string;
+} | null = {
+  id: 'blooming-2026-11',
+  image: album.cover,
+  alt: `${album.label} ${album.title}(${album.titleEn}) 커버. 누르면 앨범 소개로 이동`,
+  href: '#album',
+  label: `${site.nameKo} ${album.label}`,
+  title: album.title,
+  titleEn: album.titleEn,
+};
+
 /** 팬아트 */
 export const fanart = [
   {
