@@ -20,7 +20,7 @@ export type Member = {
   intro?: string;
   /** 전공, 주요 경력 한두 줄 */
   career?: string;
-  /** 인스타그램 아이디 (@ 없이) */
+  /** 인스타그램 아이디 (@ 없이, 주소 뒤 ?obrf= 같은 추적값은 빼고). 있으면 사진을 누를 때 그 계정이 열린다 */
   instagram?: string;
   /** public/ 기준 경로. 없으면 이름 첫 글자로 된 자리 표시가 보인다. */
   photo?: string;
@@ -108,12 +108,12 @@ export const links = {
 
 /** 멤버. 순서대로 화면에 나온다. */
 export const members: Member[] = [
-  { name: '고상준', part: '신디사이저', partEn: 'Synthesizer', photo: '/images/member-ko-sangjun.jpg' },
-  { name: '박경준', part: '메인기타', partEn: 'Main Guitar', photo: '/images/member-park-gyeongjun.jpg' },
-  { name: '채온', part: '보컬', partEn: 'Vocal', nameEn: 'Chaeon', photo: '/images/member-chaeon.jpg' },
-  { name: '서은평', part: '베이스', partEn: 'Bass', photo: '/images/member-seo-eunpyeong.jpg' },
-  { name: '지성민', part: '드럼', partEn: 'Drums', photo: '/images/member-ji-seongmin.jpg' },
-  { name: '김정원', part: '메인건반', partEn: 'Main Keys', photo: '/images/member-kim-jeongwon.jpg' },
+  { name: '고상준', part: '신디사이저', partEn: 'Synthesizer', instagram: 'producer_sangjoon', photo: '/images/member-ko-sangjun.jpg' },
+  { name: '박경준', part: '메인기타', partEn: 'Main Guitar', instagram: 'e.vaaaa_kj', photo: '/images/member-park-gyeongjun.jpg' },
+  { name: '채온', part: '보컬', partEn: 'Vocal', nameEn: 'Chaeon', instagram: 'chae0on', photo: '/images/member-chaeon.jpg' },
+  { name: '서은평', part: '베이스', partEn: 'Bass', instagram: 'ep_bass', photo: '/images/member-seo-eunpyeong.jpg' },
+  { name: '지성민', part: '드럼', partEn: 'Drums', instagram: 'ur_groove', photo: '/images/member-ji-seongmin.jpg' },
+  { name: '김정원', part: '메인건반', partEn: 'Main Keys', instagram: '0eo._.n2g', photo: '/images/member-kim-jeongwon.jpg' },
 ];
 
 /** 대표 이력. 순서는 상관없다. 화면에서는 최근 날짜가 위로 온다. */

@@ -1,5 +1,8 @@
 ---
+import SocialIcon from './SocialIcon.astro';
 import { members } from '../data/site';
+
+const igUrl = (id: string) => `https://www.instagram.com/${id}/`;
 
 const heading = '하나의 음악을 만드는 밴드';
 ---
@@ -16,9 +19,21 @@ const heading = '하나의 음악을 만드는 밴드';
       {
         members.map((m, i) => {
           const name = m.name || `멤버 ${i + 1}`;
+          const PhotoTag = m.instagram ? 'a' : 'div';
           return (
             <li class="card">
-              <div class="photo">
+              {/* 인스타그램이 있으면 사진 전체가 그 계정으로 가는 링크가 된다 */}
+              <PhotoTag
+                class:list={['photo', { linked: m.instagram }]}
+                {...(m.instagram
+                  ? {
+                      href: igUrl(m.instagram),
+                      target: '_blank',
+                      rel: 'noopener',
+                      'aria-label': `${name} 인스타그램 (@${m.instagram}) 새 창으로 열기`,
+                    }
+                  : {})}
+              >
                 {m.photo ? (
                   <img src={m.photo} alt={`${m.part} ${name}`} loading="lazy" width="800" height="1000" />
                 ) : (
@@ -26,7 +41,12 @@ const heading = '하나의 음악을 만드는 밴드';
                     {m.name ? m.name.slice(0, 1) : String(i + 1).padStart(2, '0')}
                   </span>
                 )}
-              </div>
+                {m.instagram && (
+                  <span class="ig-badge" aria-hidden="true">
+                    <SocialIcon name="instagram" size={18} />
+                  </span>
+                )}
+              </PhotoTag>
               <div class="info">
                 <p class:list={['part', { empty: !m.part }]} data-fit>
                   {m.part || '파트 입력 전'}
@@ -39,7 +59,7 @@ const heading = '하나의 음악을 만드는 밴드';
                 {m.intro && <p class="intro">{m.intro}</p>}
                 {m.career && <p class="career">{m.career}</p>}
                 {m.instagram && (
-                  <a class="ig" href={`https://www.instagram.com/${m.instagram}`} target="_blank" rel="noopener">
+                  <a class="ig" href={igUrl(m.instagram)} target="_blank" rel="noopener">
                     @{m.instagram}
                   </a>
                 )}
@@ -114,6 +134,34 @@ const heading = '하나의 음악을 만드는 밴드';
   }
   .card:hover .photo img {
     transform: scale(1.03);
+  }
+  /* 누를 수 있는 사진: 오른쪽 아래 인스타그램 표시, 마우스를 올리면 살짝 떠오른다 */
+  .linked {
+    color: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .linked:hover,
+  .linked:focus-visible {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--brand-shadow);
+  }
+  .ig-badge {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--brand-shadow);
+    box-shadow: 0 2px 6px rgba(1, 11, 9, 0.18);
+    transition: transform 0.15s ease;
+  }
+  .linked:hover .ig-badge,
+  .linked:focus-visible .ig-badge {
+    transform: scale(1.08);
   }
   .ph {
     font-family: var(--font-mono);

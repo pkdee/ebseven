@@ -29,7 +29,11 @@ const group = {
         member: named.map((m) => ({
           '@type': 'OrganizationRole',
           roleName: m.part,
-          member: { '@type': 'Person', name: m.name },
+          member: {
+            '@type': 'Person',
+            name: m.name,
+            ...(m.instagram ? { sameAs: [`https://www.instagram.com/${m.instagram}/`] } : {}),
+          },
         })),
       }
     : {}),
