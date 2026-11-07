@@ -288,8 +288,8 @@ export const fanart = [
     height: 1354,
   },
   {
-    image: '/images/fanart-band-portrait.jpg',
-    alt: '기타, 베이스, 드럼 스틱, 건반과 함께 모여 앉은 이플랫세븐을 크레파스 그림체로 그린 팬아트',
+    image: '/images/fanart-band-pencil.jpg',
+    alt: '건반, 기타, 드럼 스틱, 하늘색 베이스와 함께 모여 앉은 이플랫세븐 여섯 멤버를 촘촘한 색연필 그림체로 그린 팬아트',
     width: 900,
     height: 1200,
   },
