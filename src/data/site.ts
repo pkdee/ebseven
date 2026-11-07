@@ -66,7 +66,7 @@ export const site = {
    * Google Search Console 에서 "HTML 태그" 방식을 고르면 나오는 content 값만 적는다.
    */
   verification: {
-    google: '',
+    google: 'EGoIHcxfGqFGoa6JNumfa3CaAXYZrs2zNFapDDgsfMU',
     naver: '',
   },
   tagline: '아티스트와 관객, 지역과 음악을 잇는 세션팀',
