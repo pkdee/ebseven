@@ -8,10 +8,10 @@ import { album, site } from '../data/site';
     <div class="player">
       <button class="teaser" type="button" data-teaser={album.teaser.youtubeId} aria-label={`${album.teaser.title} 재생`}>
         <img
-          src={`https://i.ytimg.com/vi/${album.teaser.youtubeId}/oar2.jpg`}
+          src={album.teaser.thumb}
           alt={`${album.label} ${album.title}(${album.titleEn}) 티저 영상`}
-          width="1080"
-          height="1920"
+          width="405"
+          height="720"
           loading="lazy"
           decoding="async"
         />
@@ -140,12 +140,13 @@ import { album, site } from '../data/site';
     height: 100%;
     object-fit: cover;
   }
+  /* 썸네일 아래쪽 "With Chaeon" 글자를 가리지 않게 작게, 모서리에 붙여 둔다 */
   .state {
     position: absolute;
-    right: 18px;
-    bottom: 18px;
-    width: 72px;
-    height: 72px;
+    right: 14px;
+    bottom: 14px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background: var(--brand-yellow);
     box-shadow: 3px 3px 0 var(--brand-shadow);
@@ -157,10 +158,10 @@ import { album, site } from '../data/site';
     transform: scale(1.06);
   }
   .icon-play {
-    margin-left: 6px;
-    border-left: 24px solid var(--brand-shadow);
-    border-top: 15px solid transparent;
-    border-bottom: 15px solid transparent;
+    margin-left: 5px;
+    border-left: 19px solid var(--brand-shadow);
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
   }
 
   .info {

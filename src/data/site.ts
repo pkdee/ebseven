@@ -232,8 +232,12 @@ export const album = {
   cover: '/images/album-blooming.jpg',
   /** 원본: 찐찐찐찐 MASTER.wav 를 AAC로 변환. 지금은 화면에 쓰지 않고 티저 영상을 보여 준다. */
   audio: '/audio/blooming-track.m4a',
-  /** 앨범 자리에 보여 줄 티저 쇼츠. youtube.com/shorts/XXXX 의 XXXX */
-  teaser: { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1' },
+  /**
+   * 앨범 자리에 보여 줄 티저 쇼츠. youtube.com/shorts/XXXX 의 XXXX.
+   * thumb 는 유튜브에 올린 제목 카드 썸네일이다. 유튜브의 세로 썸네일 주소는 영상 중간 장면을
+   * 자동으로 뽑은 것이라, maxresdefault.jpg 가운데의 세로 부분을 잘라 따로 두었다.
+   */
+  teaser: { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1', thumb: '/images/album-teaser.jpg' },
 };
 
 /** 팬아트 */
