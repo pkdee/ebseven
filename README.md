@@ -52,14 +52,16 @@ npm run build
 
 ## 배포
 
-Vercel 에 GitHub 저장소가 연결되어 있어, `main` 에 푸시하면 https://ebseven.vercel.app 에 자동으로 배포됩니다.
+Vercel 에 GitHub 저장소가 연결되어 있어, `main` 에 푸시하면 https://www.ebseven.com 에 자동으로 배포됩니다.
+
+도메인 `ebseven.com` 은 가비아에서 샀고, 가비아 DNS 에 Vercel 이 알려 준 A(`@`), CNAME(`www`) 레코드를 넣어 연결했습니다. Vercel 에서는 `www.ebseven.com` 이 대표 주소이고 `ebseven.com` 은 그쪽으로 넘어갑니다. 예전 주소 `ebseven.vercel.app` 으로 들어오면 [vercel.json](vercel.json) 설정으로 새 주소로 넘어갑니다.
 
 | 항목 | 값 |
 |---|---|
 | Build command | `npm run build` |
 | Build output directory | `dist` |
 
-도메인을 따로 연결하면 [astro.config.mjs](astro.config.mjs) 의 `site` 값을 그 주소로 바꿉니다. 대표 주소(canonical), 링크 미리보기, `robots.txt`, `sitemap.xml` 이 모두 이 값으로 만들어집니다.
+대표 주소가 바뀌면 [astro.config.mjs](astro.config.mjs) 의 `site` 값과 [vercel.json](vercel.json) 의 넘김 주소를 함께 바꿉니다. 대표 주소(canonical), 링크 미리보기, `robots.txt`, `sitemap.xml` 이 모두 이 값으로 만들어집니다.
 
 ## 검색 노출
 
