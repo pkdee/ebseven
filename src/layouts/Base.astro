@@ -70,7 +70,7 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': [website, group] };
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0e6d62" />
     <meta name="color-scheme" content="light" />
-    {site.verification.google && <meta name="google-site-verification" content={site.verification.google} />}
+    {site.verification.google.map((code) => <meta name="google-site-verification" content={code} />)}
     {site.verification.naver && <meta name="naver-site-verification" content={site.verification.naver} />}
 
     <meta property="og:type" content="website" />

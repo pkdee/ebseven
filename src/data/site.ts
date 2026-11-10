@@ -64,10 +64,11 @@ export const site = {
   /**
    * 검색엔진 소유 확인 코드. 비워 두면 태그를 넣지 않는다.
    * Google Search Console 에서 "HTML 태그" 방식을 고르면 나오는 content 값만 적는다.
+   * 구글은 속성(또는 소유자)마다 코드가 달라서 여러 개를 함께 둘 수 있다.
    */
   verification: {
-    google: 'EGoIHcxfGqFGoa6JNumfa3CaAXYZrs2zNFapDDgsfMU',
-    naver: '',
+    google: ['XZgxoxrDGD_zfEyfCgswyk_KGUFLrhg-sNLXPMwe4GE'],
+    naver: '518cfaed84558f37ebaa40da88f3b664662186f5',
   },
   tagline: '아티스트와 관객, 지역과 음악을 잇는 세션팀',
   scenes: ['지역축제', '문화행사', '버스킹', '라이브카페'],
