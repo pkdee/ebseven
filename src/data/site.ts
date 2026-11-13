@@ -57,7 +57,7 @@ export const site = {
   name: 'ebseven',
   nameKo: '이플랫세븐',
   /** 검색 결과 제목과 링크 미리보기에 쓰인다 */
-  title: '대전 이플랫세븐 ebseven | 라이브 밴드 공연 전문팀',
+  title: '이플랫세븐 Ebseven',
   /** 검색 결과 제목 아래 설명. 네이버 서치어드바이저가 80자 이내를 권장한다 */
   description:
     '이플랫세븐(ebseven)은 2026년 결성된 대전 기반의 전국구 라이브 밴드입니다. R&B와 팝을 중심으로 다양한 장르를 연주합니다.',
@@ -70,7 +70,7 @@ export const site = {
     google: ['XZgxoxrDGD_zfEyfCgswyk_KGUFLrhg-sNLXPMwe4GE'],
     naver: '518cfaed84558f37ebaa40da88f3b664662186f5',
   },
-  tagline: '아티스트와 관객, 지역과 음악을 잇는 세션팀',
+  tagline: '아티스트와 관객, 지역과 음악을 잇는 밴드',
   scenes: ['지역축제', '문화행사', '버스킹', '라이브카페'],
   region: '대전',
   /** 링크 미리보기 이미지 (1200x630 권장). public/ 기준 경로 */
@@ -86,7 +86,7 @@ export const site = {
 };
 
 export const about = {
-  lead: '음악을 전공한 연주자들로 구성된 세션팀입니다.',
+  lead: '음악을 전공한 연주자들로 구성된 밴드입니다.',
   body: [
     '대전을 중심으로 활발하게 활동하며, 보컬 아티스트와의 협업을 통해 다양한 무대와 음악 콘텐츠를 제작하고 있습니다.',
     '지역 축제와 문화 행사, 버스킹, 라이브카페 등 다양한 공연 현장에서 지역 음악 문화의 활성화에 기여하고자 하며, 여러 아티스트와 관객, 지역과 음악을 연결하는 팀을 목표로 하고 있습니다.',
@@ -99,11 +99,11 @@ export const links = {
   youtube: 'https://www.youtube.com/@ebseven012',
   instagram: 'https://www.instagram.com/eb___seven',
   instagramId: 'eb___seven',
-  email: '',
+  email: 'ebseven@naver.com',
   phone: '010-9440-7502',
   /** 전화 옆에 보일 담당자 */
   phoneOwner: '리더 고상준',
-  kakao: '', // 카카오톡 채널 주소. 예: 'https://pf.kakao.com/_xxxx'
+  kakao: 'http://pf.kakao.com/_zNGdX', // 카카오톡 채널 주소
   linkpie: '', // Linkpie 프로필 주소
 };
 
@@ -218,17 +218,43 @@ export const videos: Video[] = [
 /**
  * 쇼츠. 인스타그램 릴스와 같은 영상이 유튜브 쇼츠(@ebseven012/shorts)에도 올라와 있어서 유튜브 것을 쓴다.
  * 유튜브 쇼츠 주소 youtube.com/shorts/XXXX 의 XXXX 부분을 youtubeId 에 적는다.
- * 2026-11-06 기준 조회수가 많은 순서.
+ * 2026-11-13 기준 채널의 쇼츠 전체(34개), 최신순. 새 쇼츠는 맨 위에 추가한다.
  */
 export const shorts: Video[] = [
-  { youtubeId: 'e6Mg9BZFSO0', title: '눈빛을 보면 난 알 수가 있어' },
-  { youtubeId: 'FtxK9ODwoKc', title: '서울의 달 Band Cover' },
-  { youtubeId: 'DTjA1QafTp8', title: '7번국도 - 정미조 Cover' },
-  { youtubeId: 'JQiw7hsfE7E', title: 'Love Theory Ebseven ver.' },
+  { youtubeId: 'jFVigAdCeRw', title: '피어나 - 이플랫세븐 Teaser 2' },
+  { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1' },
+  { youtubeId: 'cAj96fyMI9M', title: 'After LIKE' },
+  { youtubeId: '5f-JE2Q5nLw', title: '맛동산 베이스' },
+  { youtubeId: 'oWrb0lyZweo', title: '유니즌' },
+  { youtubeId: 'T4jk0Wkfioo', title: '풀영상 보러가기' },
+  { youtubeId: 'NP8Clle2XYQ', title: '풀영상 보러가기' },
+  { youtubeId: 'p2U_kId38DM', title: '커피한잔할래요' },
+  { youtubeId: '6FqRYwdfIO0', title: '터치드 하이라이트' },
+  { youtubeId: 'REpiVMuYNCU', title: '오리 날다' },
+  { youtubeId: 'ICnToS8Gos8', title: '사랑을 위해서라면' },
+  { youtubeId: 'ORGJ5g--A4o', title: '드럼치면 이거 해야됨' },
+  { youtubeId: '7jTsjTuN7rU', title: '합주곡 추천' },
   { youtubeId: '-8Evl23MbKs', title: '펑크하면 이곡이지' },
-  { youtubeId: 'apctUrwjruU', title: 'Best Part - H.E.R. Cover' },
+  { youtubeId: 'nBVrLqcP75U', title: '시대를 앞서간 음악' },
+  { youtubeId: 'e6Mg9BZFSO0', title: '눈빛을 보면 난 알 수가 있어' },
+  { youtubeId: 'JQiw7hsfE7E', title: 'Love Theory Ebseven ver.' },
+  { youtubeId: 'p61mNTuRV9M', title: '왜그래 하이라이트' },
   { youtubeId: 'eFp9NwmMcB4', title: '같애 - 거니 Band Cover' },
   { youtubeId: 'uxmBzQaeweg', title: 'Ebseven 보컬트리오' },
+  { youtubeId: '2US9W_R0bBg', title: 'If I Ain\'t Got You - Alicia Keys' },
+  { youtubeId: 'D31BpLsyaTE', title: '바라봐줘요 - 죠지 Band Cover' },
+  { youtubeId: 'Vx8kZ2xsaB4', title: 'After LIKE - IVE R&B ver.' },
+  { youtubeId: 'DTjA1QafTp8', title: '7번국도 - 정미조 Cover' },
+  { youtubeId: 'sYrCLdj4jD4', title: '요즘 바쁜가봐 Cover' },
+  { youtubeId: 'apctUrwjruU', title: 'Best Part - H.E.R. Cover' },
+  { youtubeId: 'FtxK9ODwoKc', title: '서울의 달 Band Cover' },
+  { youtubeId: 'DgVRlCNbaEU', title: 'The Chicken Organ Solo' },
+  { youtubeId: 'iZwmRk1gmS0', title: '[Band Cover] The Chicken' },
+  { youtubeId: 'Lmk7p2Pro6U', title: 'Crazy - Gnarls Barkley Ebseven ver.' },
+  { youtubeId: '714avk8gyuE', title: 'I Want You Back - Jackson 5' },
+  { youtubeId: '48Ncmcq-3HE', title: 'Jingle Bell Rock performance' },
+  { youtubeId: '79X0peFvnyU', title: 'La La La Love Song performance' },
+  { youtubeId: 'p9JEDn1K-fU', title: 'Maple Story OST Kerning City with ebseven vive' },
 ];
 
 /** 새 앨범. 커버를 누르면 audio 파일이 재생된다. */
@@ -248,11 +274,23 @@ export const album = {
    * 자동으로 뽑은 것이라, maxresdefault.jpg 가운데의 세로 부분을 잘라 따로 두었다.
    */
   teaser: { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1', thumb: '/images/album-teaser.jpg' },
+  /** 음원 사이트 바로가기. 앨범 소개 아래에 아이콘으로 보인다. */
+  listen: [
+    { service: 'melon', label: '멜론', url: 'https://kko.to/D24fDElQnG' },
+    { service: 'genie', label: '지니', url: 'http://genie.co.kr/INDFT4' },
+    {
+      service: 'applemusic',
+      label: '애플뮤직',
+      url: 'https://music.apple.com/kr/album/%ED%94%BC%EC%96%B4%EB%82%98-feat-%EC%B1%84%EC%98%A8/6833891437?i=6833891438',
+    },
+    // youtu.be 주소는 휴대폰에서 일반 유튜브 앱으로 열린다. 유튜브 뮤직 앱으로 열리려면 music.youtube.com 주소여야 한다.
+    { service: 'youtubemusic', label: '유튜브 뮤직', url: 'https://music.youtube.com/watch?v=lNj1mRfrXI8' },
+  ] as const,
 };
 
 /**
  * 사이트에 들어오면 뜨는 알림창. null 로 두면 뜨지 않는다.
- * "다시 보지 않기"를 누른 사람은 id 가 같은 동안 다시 보지 않는다. 새 소식으로 바꾸면 id 도 바꾼다.
+ * "7일간 보지 않기"를 누른 사람은 7일 동안 보지 않는다. 새 소식으로 바꾸면 id 도 바꿔서 바로 다시 보이게 한다.
  * "닫기"는 창만 닫고, 새로고침하거나 다시 들어오면 또 뜬다.
  */
 export const popup: {
@@ -312,10 +350,5 @@ export const booking = {
     { en: 'Live Café & Club', ko: '라이브카페 및 기획 공연' },
     { en: 'Artist Collaboration', ko: '보컬 아티스트와 협업 공연' },
     { en: 'Music Projects', ko: '음악 관계자와의 협업 및 공연 프로젝트' },
-  ],
-  details: [
-    { label: '활동 지역', value: '전국' },
-    { label: '공연 시간', value: '' }, // 예: '30분 ~ 90분 (협의)'
-    { label: '음향 장비', value: '' }, // 예: '소규모 공연은 자체 장비 지참 가능'
   ],
 };

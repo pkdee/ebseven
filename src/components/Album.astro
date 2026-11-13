@@ -1,5 +1,13 @@
 ---
+import { siApplemusic, siYoutubemusic } from 'simple-icons';
 import { album, site } from '../data/site';
+
+// 애플뮤직, 유튜브 뮤직은 simple-icons(CC0) 의 공식 모양을 쓴다.
+// 멜론, 지니는 simple-icons 에 없어서 각 서비스 사이트가 쓰는 공식 아이콘 이미지를 받아 두었다.
+const LOGO = {
+  melon: '/images/listen-melon.png',
+  genie: '/images/listen-genie.png',
+} as const;
 ---
 
 <section class="section album-section" id="album">
@@ -22,10 +30,38 @@ import { album, site } from '../data/site';
     <div class="info">
       <p class="eyebrow">New Release</p>
       <p class="label">{site.nameKo} {album.label}</p>
-      <h2 class="title">
-        {album.title}
-        <span>{album.titleEn}</span>
-      </h2>
+      {/* 앨범 제목 오른쪽에 음원 사이트 아이콘을 둔다 */}
+      <div class="title-row">
+        <h2 class="title">
+          {album.title}
+          <span>{album.titleEn}</span>
+        </h2>
+        <ul class="listen" aria-label="음원 사이트에서 듣기">
+          {
+            album.listen.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener" aria-label={`${s.label}에서 ${album.title} 듣기`} title={s.label}>
+                  <span class="listen-icon" aria-hidden="true">
+                    {s.service === 'applemusic' ? (
+                      <svg viewBox="0 0 24 24" width="26" height="26">
+                        <path d={siApplemusic.path} fill={`#${siApplemusic.hex}`} />
+                      </svg>
+                    ) : s.service === 'youtubemusic' ? (
+                      <svg viewBox="0 0 24 24" width="28" height="28">
+                        {/* 글리프의 빈 고리 부분이 흰색으로 보이도록 흰 원을 깔아 둔다 */}
+                        <circle cx="12" cy="12" r="11.5" fill="#ffffff" />
+                        <path d={siYoutubemusic.path} fill={`#${siYoutubemusic.hex}`} />
+                      </svg>
+                    ) : (
+                      <img src={LOGO[s.service]} alt="" width="28" height="28" loading="lazy" decoding="async" />
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
       <p class="release">
         <span class="dday" data-release={album.releaseAt} hidden></span>
         {album.releaseText}
@@ -41,7 +77,7 @@ import { album, site } from '../data/site';
           <li><b data-unit="s">--</b><span>초</span></li>
         </ol>
       </div>
-      <p class="hint">티저 영상을 눌러 피어나를 먼저 만나 보세요.</p>
+      <p class="hint">음원 사이트에서 피어나를 들어 보세요.</p>
     </div>
   </div>
 </section>
@@ -209,6 +245,57 @@ import { album, site } from '../data/site';
   }
   .dday[hidden] {
     display: none;
+  }
+  /* 음원 사이트 아이콘. 첫 화면 바로가기 아이콘(Hero 의 .quick)과 같은 모양으로 맞춘다 */
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+  /* 휴대폰 폭에서도 제목 옆에 붙도록 아이콘 간격을 줄인다 */
+  @media (max-width: 480px) {
+    .title-row {
+      column-gap: 12px;
+    }
+    .title-row .listen {
+      gap: 0;
+    }
+    .title-row .listen a {
+      width: 40px;
+    }
+  }
+  .listen {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .listen a {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    /* 칸 없이 로고만 보이게 둔다. 마우스를 올리면 살짝 커진다 */
+    border-radius: 12px;
+    transition: transform 0.15s ease;
+  }
+  .listen a:hover,
+  .listen a:focus-visible {
+    transform: scale(1.12);
+  }
+  .listen-icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+  }
+  .listen-icon img {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
   }
   .hint {
     color: var(--muted);

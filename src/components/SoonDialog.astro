@@ -1,21 +1,21 @@
 ---
 /**
- * "준비중입니다." 안내창.
- * data-soon 속성이 붙은 버튼이나 링크를 누르면 시스템 알림 대신 이 창이 뜬다.
+ * 섭외 문의 연락처 창.
+ * data-soon 속성이 붙은 버튼이나 링크(헤더, 첫 화면의 "섭외 문의")를 누르면 이 창이 뜬다.
  */
+import ContactIcons from './ContactIcons.astro';
 ---
 
-<dialog class="soon" data-soon-dialog aria-labelledby="soon-title" aria-describedby="soon-desc">
+<dialog class="soon" data-soon-dialog aria-labelledby="soon-title">
   <div class="card">
     <img class="logo" src="/images/logo-wordmark.png" alt="" width="749" height="145" />
-    <p class="badge">Coming Soon</p>
-    <h2 id="soon-title">준비중입니다.</h2>
-    <p id="soon-desc" class="desc">
-      섭외 문의 창구를 준비하고 있어요.<br />
-      조금만 기다려 주세요.
-    </p>
+    <p class="badge">Booking</p>
+    <h2 id="soon-title">섭외 요청</h2>
+    <div class="icons">
+      <ContactIcons />
+    </div>
     <form method="dialog">
-      <button class="btn btn--brand ok" type="submit" autofocus>확인</button>
+      <button class="btn btn--brand ok" type="submit" autofocus>닫기</button>
     </form>
   </div>
 </dialog>
@@ -69,7 +69,7 @@
   }
 
   .card {
-    width: min(360px, calc(100vw - 32px));
+    width: min(380px, calc(100vw - 32px));
     display: grid;
     justify-items: center;
     gap: 10px;
@@ -102,14 +102,13 @@
     font-weight: 700;
     margin-top: 4px;
   }
-  .desc {
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
+  .icons {
+    width: 100%;
+    margin-top: 10px;
   }
   form {
     width: 100%;
-    margin-top: 12px;
+    margin-top: 4px;
   }
   .ok {
     width: 100%;

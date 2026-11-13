@@ -1,0 +1,220 @@
+---
+/**
+ * 메일, 전화, 카톡, 인스타그램 DM 연락처 아이콘.
+ * 섭외 문의 창(SoonDialog)에서 쓴다.
+ */
+import { siInstagram } from 'simple-icons';
+import { links } from '../data/site';
+
+// 같은 페이지에 여러 번 쓰여도 인스타그램 그라데이션 id 가 겹치지 않게 한다
+const gid = `dm-grad-${Math.random().toString(36).slice(2, 8)}`;
+
+type Kind = 'mail' | 'kakao' | 'phone' | 'dm';
+const contacts = [
+  // copy: PC 에서는 앱을 여는 대신 이 값을 복사한다 (휴대폰에서는 메일, 전화 앱이 열린다)
+  links.email && { kind: 'mail', label: '메일', value: links.email, href: `mailto:${links.email}`, copy: '메일 주소' },
+  links.phone && {
+    kind: 'phone',
+    label: '전화',
+    value: links.phone,
+    href: `tel:${links.phone.replaceAll('-', '')}`,
+    copy: '전화번호',
+  },
+  links.kakao && { kind: 'kakao', label: '카톡', value: '카카오톡 채널', href: links.kakao, external: true },
+  links.instagram && { kind: 'dm', label: 'DM', value: `@${links.instagramId}`, href: links.instagram, external: true },
+].filter(Boolean) as { kind: Kind; label: string; value: string; href: string; external?: boolean; copy?: string }[];
+
+// 바탕 없이 아이콘만 둔다. 메일, 전화는 브랜드가 없어서 단순한 선 아이콘을 쓰고, 인스타그램은 simple-icons(CC0) 공식 모양을 쓴다
+const MAIL = 'M4 6h16v12H4z M4 7l8 6 8-6';
+const PHONE =
+  'M6.6 3.5h3l1.5 4-2 1.3a11 11 0 0 0 6.1 6.1l1.3-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z';
+// 카카오가 배포한 카카오톡 공유 버튼(kakaotalk_sharing_btn_medium.svg)의 말풍선 모양. viewBox 0 0 68 68 기준
+const KAKAO_BUBBLE =
+  'M34 11.5C48.3586 11.5 59.9997 20.7421 60 32.1436C60 43.5452 48.3587 52.7881 34 52.7881C32.4052 52.7881 30.8419 52.6724 29.3252 52.4551L18.7852 59.6045C18.6492 59.7136 18.4866 59.7665 18.3223 59.7666C18.1325 59.7666 17.94 59.6926 17.7959 59.5479C17.595 59.3449 17.526 59.0487 17.6172 58.7764L20.0674 49.5752C12.8149 45.9128 8 39.4735 8 32.1436C8.00025 20.7422 19.6406 11.5002 34 11.5ZM28.5527 26.1455C27.5832 26.1455 26.9601 26.8985 26.7012 27.6025L23.0918 37.2139C23.0552 37.3089 22.9775 37.5058 22.9775 37.7627C22.9776 38.4105 23.5161 38.9187 24.2012 38.9189C24.8235 38.9189 25.2035 38.6372 25.3975 38.0312L25.9551 36.3408H31.1514L31.6953 38.0508C31.8883 38.6353 32.2848 38.9189 32.9102 38.9189C33.5457 38.9189 34.0439 38.443 34.0439 37.8369C34.0439 37.7409 34.0149 37.4961 33.9033 37.1953L30.4043 27.5996C30.0794 26.6764 29.4043 26.1457 28.5527 26.1455ZM15.7734 26.2578C15.0506 26.2578 14.6603 26.8445 14.6602 27.3965C14.6602 27.921 14.952 28.5322 15.7734 28.5322H18.3887V37.6094C18.3887 38.4166 18.8653 38.918 19.6318 38.918C20.3983 38.9179 20.875 38.4165 20.875 37.6094V28.5322H23.4902C24.3123 28.532 24.6045 27.9209 24.6045 27.3965C24.6044 26.8446 24.2138 26.258 23.4902 26.2578H15.7734ZM44.7822 26.1445C44.0615 26.1445 43.5373 26.6629 43.5371 27.376V37.7227C43.5371 38.437 44.038 38.918 44.7822 38.918C45.4909 38.918 46.0264 38.4043 46.0264 37.7227V34.3584L46.9189 33.4424L50.1865 37.918C50.6657 38.57 50.9249 38.8593 51.3838 38.9062C51.4488 38.9134 51.5142 38.917 51.5781 38.917C51.8455 38.9169 52.7217 38.847 52.8193 37.9365C52.8853 37.4275 52.5832 37.0292 52.2168 36.5508L48.6748 31.8887L51.668 28.8525C51.7786 28.7261 51.8803 28.6128 51.9727 28.5107C52.3797 28.0588 52.585 27.8321 52.585 27.4883C52.6 26.7539 51.9963 26.3524 51.3955 26.3369C50.9203 26.3369 50.6012 26.5991 50.4062 26.793L46.0264 31.3828V27.376C46.0262 26.6404 45.5253 26.1445 44.7822 26.1445ZM36.585 26.1445C35.8174 26.1445 35.3398 26.646 35.3398 27.4512V37.3945C35.34 38.2597 35.8265 38.7773 36.6396 38.7773H41.2754C42.0275 38.7773 42.4484 38.217 42.4639 37.6865C42.4811 37.3733 42.3759 37.0679 42.1719 36.8516C41.9577 36.623 41.648 36.5029 41.2754 36.5029H37.8262V27.4512C37.8262 26.6462 37.3513 26.1447 36.585 26.1445ZM28.4414 28.4385C28.4497 28.4156 28.4829 28.4156 28.4912 28.4385L30.4043 34.2461H26.5322L28.4414 28.4385Z';
+---
+
+<div class="contact-icons" data-contact-icons>
+  <ul class="contacts">
+    {
+      contacts.map((c) => (
+        <li>
+          <a
+            href={c.href}
+            aria-label={`${c.label} 문의: ${c.value}`}
+            title={c.value}
+            {...(c.external ? { target: '_blank', rel: 'noopener' } : {})}
+            {...(c.copy ? { 'data-copy': c.value, 'data-copy-label': c.copy } : {})}
+          >
+            <span class:list={['c-icon', `c-icon--${c.kind}`]} aria-hidden="true">
+              {c.kind === 'kakao' ? (
+                <svg viewBox="0 0 68 68" width="36" height="36">
+                  <rect class="kakao-bg" width="68" height="68" rx="5" fill="#FAE100" />
+                  <path d={KAKAO_BUBBLE} fill="#3C1E1E" />
+                </svg>
+              ) : c.kind === 'dm' ? (
+                <svg viewBox="0 0 24 24" width="32" height="32">
+                  <defs>
+                    <radialGradient id={gid} cx="30%" cy="107%" r="150%">
+                      <stop offset="0%" stop-color="#fdf497" />
+                      <stop offset="5%" stop-color="#fdf497" />
+                      <stop offset="45%" stop-color="#fd5949" />
+                      <stop offset="60%" stop-color="#d6249f" />
+                      <stop offset="90%" stop-color="#285aeb" />
+                    </radialGradient>
+                  </defs>
+                  <path d={siInstagram.path} fill={`url(#${gid})`} />
+                </svg>
+              ) : (
+                <svg
+                  viewBox="0 0 24 24"
+                  width="34"
+                  height="34"
+                  fill="none"
+                  stroke={c.kind === 'mail' ? 'var(--brand-teal)' : '#34c759'}
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                >
+                  <path d={c.kind === 'mail' ? MAIL : PHONE} />
+                </svg>
+              )}
+            </span>
+            <span class="c-label">{c.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="copied" role="status" aria-live="polite" data-copied>
+    <svg class="check" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+      <circle cx="10" cy="10" r="10" fill="#34c759" />
+      <path
+        d="M5.8 10.4l2.8 2.8 5.6-5.8"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+    <span></span>
+  </p>
+</div>
+
+<script>
+  // 메일, 전화: 휴대폰은 링크 그대로 앱을 열고, PC 는 값을 복사하고 안내를 띄운다.
+  // PC 에는 메일 앱이나 전화 기능이 없는 경우가 많아서다. 아이패드는 맥처럼 보이므로 터치 화면으로도 판단한다.
+  const isMobile =
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 1 && window.matchMedia('(pointer: coarse)').matches);
+
+  const copyText = async (text: string, host: HTMLElement) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // 클립보드 API 를 쓸 수 없는 환경을 위한 예전 방식
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      host.append(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    }
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-contact-icons]').forEach((box) => {
+    const notice = box.querySelector<HTMLElement>('[data-copied]');
+    let hideTimer = 0;
+    box.querySelectorAll<HTMLAnchorElement>('[data-copy]').forEach((a) => {
+      a.addEventListener('click', async (e) => {
+        if (isMobile) return;
+        e.preventDefault();
+        const value = a.dataset.copy!;
+        const ok = await copyText(value, box);
+        if (!notice) return;
+        // 복사에 성공하면 체크 아이콘과 안내만, 브라우저가 복사를 막으면 직접 볼 수 있게 값을 보여 준다
+        notice.classList.toggle('ok', ok);
+        notice.lastElementChild!.textContent = ok
+          ? `${a.dataset.copyLabel}를 복사했어요`
+          : `${a.dataset.copyLabel}: ${value}`;
+        notice.classList.add('show');
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(() => notice.classList.remove('show'), 2500);
+      });
+    });
+  });
+</script>
+
+<style>
+  .contact-icons {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* 연락처 아이콘. 누르면 바로 메일, 카톡, 전화, DM 으로 넘어간다 */
+  .contacts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+  .contacts a {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .c-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    transition: transform 0.15s ease;
+  }
+  .contacts a:hover .c-icon,
+  .contacts a:focus-visible .c-icon {
+    transform: scale(1.08);
+  }
+  /* 카카오 공유 버튼의 hover 색 */
+  .contacts a:hover .kakao-bg,
+  .contacts a:focus-visible .kakao-bg {
+    fill: #ffde00;
+  }
+  .c-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* 복사 안내. 자리를 미리 잡아 두어 문구가 나타날 때 크기가 흔들리지 않게 한다 */
+  .copied {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-height: 1.5em;
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--brand-teal);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .copied.show {
+    opacity: 1;
+  }
+  .copied .check {
+    display: none;
+    flex: none;
+  }
+  .copied.ok .check {
+    display: block;
+  }
+</style>

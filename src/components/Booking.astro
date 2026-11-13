@@ -1,90 +1,46 @@
 ---
-import SocialIcon from './SocialIcon.astro';
-import { booking, links } from '../data/site';
-
-const details = booking.details.filter((d) => d.value);
-
-const quick = [
-  links.phone && {
-    label: links.phoneOwner || '전화',
-    value: links.phone,
-    href: `tel:${links.phone.replaceAll('-', '')}`,
-  },
-  links.instagram && {
-    label: '인스타그램 DM',
-    value: `@${links.instagramId}`,
-    href: links.instagram,
-    icon: 'instagram',
-  },
-  links.email && { label: '메일', value: links.email, href: `mailto:${links.email}` },
-  links.kakao && { label: '카카오톡', value: '채널로 문의하기', href: links.kakao },
-].filter(Boolean) as { label: string; value: string; href: string; icon?: 'instagram' | 'youtube' }[];
+import { booking } from '../data/site';
 ---
 
 <section class="section" id="booking">
   <div class="container">
     <div class="section-head">
       <p class="eyebrow">Booking</p>
-      <h2 class="section-title">공연 섭외 및 문의</h2>
+      {/* 제목 오른쪽 버튼. data-soon 이 붙어 있어 누르면 섭외 문의 창(SoonDialog)이 열린다 */}
+      <div class="head-row">
+        <h2 class="section-title">공연 섭외 및 문의</h2>
+        <a class="btn btn--brand inquiry" href="#booking" data-soon>문의하기</a>
+      </div>
       <p class="section-desc">{booking.intro}</p>
     </div>
 
-    <div class="layout">
-      <div>
-        <p class="title">이런 무대를 함께 만듭니다</p>
-        <ul class="formats">
-          {
-            booking.formats.map((f) => (
-              <li>
-                <span class="en">{f.en}</span>
-                <b>{f.ko}</b>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div class="side">
-        {
-          details.length > 0 && (
-            <dl class="details">
-              {details.map((d) => (
-                <div>
-                  <dt>{d.label}</dt>
-                  <dd>{d.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )
-        }
-
-        {
-          quick.length > 0 && (
-            <div class="quick">
-              <p class="title">바로 연락하기</p>
-              {quick.map((q) => (
-                <a href={q.href} target={q.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
-                  <span>{q.label}</span>
-                  <em class="val">
-                    {q.icon && <SocialIcon name={q.icon} size={18} />}
-                    {q.value}
-                  </em>
-                </a>
-              ))}
-            </div>
-          )
-        }
-      </div>
-    </div>
+    <p class="title">이런 무대를 함께 만듭니다</p>
+    <ul class="formats">
+      {
+        booking.formats.map((f) => (
+          <li>
+            <span class="en">{f.en}</span>
+            <b>{f.ko}</b>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </section>
 
 <style>
-  .layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    gap: clamp(28px, 6vw, 80px);
-    align-items: start;
+  .head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+  }
+  /* 헤더의 문의하기 버튼과 같은 크기로 작게 둔다 */
+  .inquiry {
+    min-height: 38px;
+    padding: 0 16px;
+    font-size: 0.9rem;
   }
   .title {
     font-weight: 600;
@@ -114,61 +70,5 @@ const quick = [
     font-size: var(--step--1);
     font-weight: 500;
     color: var(--accent);
-  }
-
-  .side {
-    display: grid;
-    gap: 28px;
-    padding: clamp(20px, 3vw, 32px);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-  }
-  .details {
-    margin: 0;
-    display: grid;
-    gap: 10px;
-  }
-  .details div {
-    display: grid;
-    grid-template-columns: 7.5em 1fr;
-    gap: 14px;
-  }
-  .details dt {
-    color: var(--muted);
-  }
-  .details dd {
-    margin: 0;
-    min-width: 0;
-    font-weight: 600;
-  }
-  .quick {
-    display: grid;
-    gap: 8px;
-  }
-  .quick a {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-decoration: none;
-    font-family: var(--font-mono);
-    font-size: 0.95rem;
-  }
-  .quick a span {
-    font-family: var(--font-body);
-    color: var(--muted);
-    width: 7.5em;
-    flex: none;
-  }
-  .quick .val {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-style: normal;
-  }
-  @media (max-width: 860px) {
-    .layout {
-      grid-template-columns: 1fr;
-    }
   }
 </style>

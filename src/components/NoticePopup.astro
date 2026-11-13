@@ -24,7 +24,7 @@ import { popup } from '../data/site';
         )}
         <div class="actions">
           <button type="button" class="never" data-notice-never>
-            다시 보지 않기
+            7일간 보지 않기
           </button>
           <button type="button" class="close" data-notice-close>
             닫기
@@ -38,17 +38,19 @@ import { popup } from '../data/site';
 <script>
   const dialog = document.querySelector<HTMLDialogElement>('dialog[data-notice]');
   if (dialog) {
-    // "다시 보지 않기"를 누른 기록만 남긴다. "닫기"는 아무것도 남기지 않아 다음에 들어오면 다시 뜬다.
-    const neverKey = `ebseven-notice-never:${dialog.dataset.notice}`;
+    // "7일간 보지 않기"를 누르면 그때부터 7일 뒤 시각을 남긴다. 그 시각이 지나면 다시 뜬다.
+    // "닫기"는 아무것도 남기지 않아 다음에 들어오면 다시 뜬다.
+    const HIDE_DAYS = 7;
+    const hideKey = `ebseven-notice-hide-until:${dialog.dataset.notice}`;
     // 사생활 보호 모드 등에서는 저장소가 막혀 있을 수 있다. 그때는 그냥 매번 보여 준다.
-    let never = false;
+    let hidden = false;
     try {
-      never = window.localStorage.getItem(neverKey) === '1';
+      hidden = Date.now() < Number(window.localStorage.getItem(hideKey) || 0);
     } catch {
       /* 읽지 못하면 보여 준다 */
     }
 
-    if (!never) {
+    if (!hidden) {
       // 첫 화면이 그려진 뒤 살짝 늦게 띄운다.
       // 브라우저는 창을 열면 안쪽 첫 버튼이나 링크에 포커스를 줘 테두리가 생길 수 있다.
       // 창 자체로 포커스를 옮겨 아무것도 선택된 것처럼 보이지 않게 한다. Tab 을 누르면 커버부터 차례로 이동한다.
@@ -63,7 +65,7 @@ import { popup } from '../data/site';
     };
     dialog.querySelector('[data-notice-never]')!.addEventListener('click', () => {
       try {
-        window.localStorage.setItem(neverKey, '1');
+        window.localStorage.setItem(hideKey, String(Date.now() + HIDE_DAYS * 24 * 60 * 60 * 1000));
       } catch {
         /* 저장하지 못해도 창은 닫힌다 */
       }

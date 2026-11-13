@@ -1,6 +1,6 @@
 ---
 import SocialIcon from './SocialIcon.astro';
-import { site, videos, links, album } from '../data/site';
+import { site, links, album } from '../data/site';
 ---
 
 <section class="hero" id="top">
@@ -14,12 +14,6 @@ import { site, videos, links, album } from '../data/site';
       <ul class="scenes" aria-label="주요 공연 현장">
         {site.scenes.map((s) => <li>{s}</li>)}
       </ul>
-      <div class="actions">
-        <a class="btn btn--brand" href="#booking" data-soon>공연 섭외 문의</a>
-        <a class="btn btn--ghost" href={videos.length ? '#videos' : '#about'}>
-          {videos.length ? '공연 영상 보기' : '팀 소개 보기'}
-        </a>
-      </div>
       <nav class="quick" aria-label="바로가기">
         {
           links.youtube && (
@@ -174,16 +168,6 @@ import { site, videos, links, album } from '../data/site';
     border: 1px solid var(--hero-line);
     border-radius: 999px;
     padding: 4px 12px;
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 8px;
-  }
-  .actions .btn--ghost {
-    color: var(--hero-ink);
-    border-color: var(--hero-muted);
   }
 
   .quick {
