@@ -273,7 +273,12 @@ export const album = {
    * thumb 는 유튜브에 올린 제목 카드 썸네일이다. 유튜브의 세로 썸네일 주소는 영상 중간 장면을
    * 자동으로 뽑은 것이라, maxresdefault.jpg 가운데의 세로 부분을 잘라 따로 두었다.
    */
-  teaser: { youtubeId: 'BTAic_Fu9vw', title: '피어나 - 이플랫세븐 Teaser 1', thumb: '/images/album-teaser.jpg' },
+  // Teaser 2 는 따로 잘라 둔 파일 없이 유튜브의 제목 카드 썸네일(16:9)을 쓴다. 앨범 칸이 세로라 가운데가 잘려 보인다.
+  teaser: {
+    youtubeId: 'jFVigAdCeRw',
+    title: '피어나 - 이플랫세븐 Teaser 2',
+    thumb: 'https://i.ytimg.com/vi/jFVigAdCeRw/maxresdefault.jpg',
+  },
   /** 음원 사이트 바로가기. 앨범 소개 아래에 아이콘으로 보인다. */
   listen: [
     { service: 'melon', label: '멜론', url: 'https://kko.to/D24fDElQnG' },
